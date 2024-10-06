@@ -20,3 +20,8 @@ C:\LTWeb\SV21T1020228\SV21T1020228.DataLayers\obj\Debug\net8.0\SV21T1020228.Data
 C:\LTWeb\SV21T1020228\SV21T1020228.DataLayers\obj\Debug\net8.0\refint\SV21T1020228.DataLayers.dll
 C:\LTWeb\SV21T1020228\SV21T1020228.DataLayers\obj\Debug\net8.0\SV21T1020228.DataLayers.pdb
 C:\LTWeb\SV21T1020228\SV21T1020228.DataLayers\obj\Debug\net8.0\ref\SV21T1020228.DataLayers.dll
+C:\LTWeb\SV21T1020228\SV21T1020228.DataLayers\bin\Debug\net8.0\SV21T1020228.DomainModels.dll
+C:\LTWeb\SV21T1020228\SV21T1020228.DataLayers\bin\Debug\net8.0\SV21T1020228.DomainModels.pdb
+C:\LTWeb\SV21T1020228\SV21T1020228.DataLayers\obj\Debug\net8.0\SV21T1020228.DataLayers.csproj.AssemblyReference.cache
+C:\LTWeb\SV21T1020228\SV21T1020228.DataLayers\obj\Debug\net8.0\SV21T1020228.DataLayers.sourcelink.json
+C:\LTWeb\SV21T1020228\SV21T1020228.DataLayers\obj\Debug\net8.0\SV21T102.CD722FE7.Up2Date

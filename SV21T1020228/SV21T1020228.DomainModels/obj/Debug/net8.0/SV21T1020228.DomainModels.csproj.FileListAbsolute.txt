@@ -20,3 +20,4 @@ C:\LTWeb\SV21T1020228\SV21T1020228.DomainModels\obj\Debug\net8.0\SV21T1020228.Do
 C:\LTWeb\SV21T1020228\SV21T1020228.DomainModels\obj\Debug\net8.0\refint\SV21T1020228.DomainModels.dll
 C:\LTWeb\SV21T1020228\SV21T1020228.DomainModels\obj\Debug\net8.0\SV21T1020228.DomainModels.pdb
 C:\LTWeb\SV21T1020228\SV21T1020228.DomainModels\obj\Debug\net8.0\ref\SV21T1020228.DomainModels.dll
+C:\LTWeb\SV21T1020228\SV21T1020228.DomainModels\obj\Debug\net8.0\SV21T1020228.DomainModels.sourcelink.json
