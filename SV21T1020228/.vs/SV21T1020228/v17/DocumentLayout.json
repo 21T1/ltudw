@@ -1,157 +1,19 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\LTWeb\\SV21T1020228\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{81F0CA6B-2E09-47B9-B04E-B4255E8849D4}|SV21T1020228.DataLayers\\SV21T1020228.DataLayers.csproj|c:\\ltweb\\sv21t1020228\\sv21t1020228.datalayers\\sql server\\_basedal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{81F0CA6B-2E09-47B9-B04E-B4255E8849D4}|SV21T1020228.DataLayers\\SV21T1020228.DataLayers.csproj|solutionrelative:sv21t1020228.datalayers\\sql server\\_basedal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{42B963F6-47B0-45DE-9C25-33D6BF32503F}|SV21T1020228.Web\\SV21T1020228.Web.csproj|c:\\ltweb\\sv21t1020228\\sv21t1020228.web\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{42B963F6-47B0-45DE-9C25-33D6BF32503F}|SV21T1020228.Web\\SV21T1020228.Web.csproj|solutionrelative:sv21t1020228.web\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{42B963F6-47B0-45DE-9C25-33D6BF32503F}|SV21T1020228.Web\\SV21T1020228.Web.csproj|c:\\ltweb\\sv21t1020228\\sv21t1020228.web\\views\\customer\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{42B963F6-47B0-45DE-9C25-33D6BF32503F}|SV21T1020228.Web\\SV21T1020228.Web.csproj|solutionrelative:sv21t1020228.web\\views\\customer\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{81F0CA6B-2E09-47B9-B04E-B4255E8849D4}|SV21T1020228.DataLayers\\SV21T1020228.DataLayers.csproj|c:\\ltweb\\sv21t1020228\\sv21t1020228.datalayers\\sql server\\customerdal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{81F0CA6B-2E09-47B9-B04E-B4255E8849D4}|SV21T1020228.DataLayers\\SV21T1020228.DataLayers.csproj|solutionrelative:sv21t1020228.datalayers\\sql server\\customerdal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A52D8812-2B86-4C40-ADAF-D874A341D109}|SV21T1020228.BusinessLayers\\SV21T1020228.BusinessLayers.csproj|c:\\ltweb\\sv21t1020228\\sv21t1020228.businesslayers\\commondataservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A52D8812-2B86-4C40-ADAF-D874A341D109}|SV21T1020228.BusinessLayers\\SV21T1020228.BusinessLayers.csproj|solutionrelative:sv21t1020228.businesslayers\\commondataservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E2085850-22C4-46EA-BDF1-81B77290955A}|SV21T1020228.DomainModels\\SV21T1020228.DomainModels.csproj|c:\\ltweb\\sv21t1020228\\sv21t1020228.domainmodels\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E2085850-22C4-46EA-BDF1-81B77290955A}|SV21T1020228.DomainModels\\SV21T1020228.DomainModels.csproj|solutionrelative:sv21t1020228.domainmodels\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{81F0CA6B-2E09-47B9-B04E-B4255E8849D4}|SV21T1020228.DataLayers\\SV21T1020228.DataLayers.csproj|c:\\ltweb\\sv21t1020228\\sv21t1020228.datalayers\\sql server\\categorydal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{81F0CA6B-2E09-47B9-B04E-B4255E8849D4}|SV21T1020228.DataLayers\\SV21T1020228.DataLayers.csproj|solutionrelative:sv21t1020228.datalayers\\sql server\\categorydal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A52D8812-2B86-4C40-ADAF-D874A341D109}|SV21T1020228.BusinessLayers\\SV21T1020228.BusinessLayers.csproj|c:\\ltweb\\sv21t1020228\\sv21t1020228.businesslayers\\sv21t1020228.businesslayers.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{A52D8812-2B86-4C40-ADAF-D874A341D109}|SV21T1020228.BusinessLayers\\SV21T1020228.BusinessLayers.csproj|solutionrelative:sv21t1020228.businesslayers\\sv21t1020228.businesslayers.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "DockedWidth": 221,
+          "SelectedChildIndex": -1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "_BaseDAL.cs",
-              "DocumentMoniker": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.DataLayers\\SQL Server\\_BaseDAL.cs",
-              "RelativeDocumentMoniker": "SV21T1020228.DataLayers\\SQL Server\\_BaseDAL.cs",
-              "ToolTip": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.DataLayers\\SQL Server\\_BaseDAL.cs",
-              "RelativeToolTip": "SV21T1020228.DataLayers\\SQL Server\\_BaseDAL.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-04T08:23:49.275Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CustomerController.cs",
-              "DocumentMoniker": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.Web\\Controllers\\CustomerController.cs",
-              "RelativeDocumentMoniker": "SV21T1020228.Web\\Controllers\\CustomerController.cs",
-              "ToolTip": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.Web\\Controllers\\CustomerController.cs",
-              "RelativeToolTip": "SV21T1020228.Web\\Controllers\\CustomerController.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAxwBAAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-04T10:20:55.789Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.Web\\Views\\Customer\\Index.cshtml",
-              "RelativeDocumentMoniker": "SV21T1020228.Web\\Views\\Customer\\Index.cshtml",
-              "ToolTip": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.Web\\Views\\Customer\\Index.cshtml",
-              "RelativeToolTip": "SV21T1020228.Web\\Views\\Customer\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-10-04T10:20:47.089Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CommonDataService.cs",
-              "DocumentMoniker": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.BusinessLayers\\CommonDataService.cs",
-              "RelativeDocumentMoniker": "SV21T1020228.BusinessLayers\\CommonDataService.cs",
-              "ToolTip": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.BusinessLayers\\CommonDataService.cs",
-              "RelativeToolTip": "SV21T1020228.BusinessLayers\\CommonDataService.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABMAAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-04T08:22:33.742Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "CustomerDAL.cs",
-              "DocumentMoniker": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.DataLayers\\SQL Server\\CustomerDAL.cs",
-              "RelativeDocumentMoniker": "SV21T1020228.DataLayers\\SQL Server\\CustomerDAL.cs",
-              "ToolTip": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.DataLayers\\SQL Server\\CustomerDAL.cs",
-              "RelativeToolTip": "SV21T1020228.DataLayers\\SQL Server\\CustomerDAL.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAA1wCUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-04T08:51:53.211Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Category.cs",
-              "DocumentMoniker": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.DomainModels\\Category.cs",
-              "RelativeDocumentMoniker": "SV21T1020228.DomainModels\\Category.cs",
-              "ToolTip": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.DomainModels\\Category.cs",
-              "RelativeToolTip": "SV21T1020228.DomainModels\\Category.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-04T08:39:23.439Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "CategoryDAL.cs",
-              "DocumentMoniker": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.DataLayers\\SQL Server\\CategoryDAL.cs",
-              "RelativeDocumentMoniker": "SV21T1020228.DataLayers\\SQL Server\\CategoryDAL.cs",
-              "ToolTip": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.DataLayers\\SQL Server\\CategoryDAL.cs",
-              "RelativeToolTip": "SV21T1020228.DataLayers\\SQL Server\\CategoryDAL.cs",
-              "ViewState": "AgIAADgAAAAAAAAAAAAowCEAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-04T08:40:08.778Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "SV21T1020228.BusinessLayers",
-              "DocumentMoniker": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.BusinessLayers\\SV21T1020228.BusinessLayers.csproj",
-              "RelativeDocumentMoniker": "SV21T1020228.BusinessLayers\\SV21T1020228.BusinessLayers.csproj",
-              "ToolTip": "C:\\LTWeb\\SV21T1020228\\SV21T1020228.BusinessLayers\\SV21T1020228.BusinessLayers.csproj",
-              "RelativeToolTip": "SV21T1020228.BusinessLayers\\SV21T1020228.BusinessLayers.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-10-04T08:22:30.254Z",
-              "EditorCaption": ""
             }
           ]
         }

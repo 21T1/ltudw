@@ -6087,4 +6087,8 @@
     <ProjectReference Include="..\SV21T1020228.DomainModels\SV21T1020228.DomainModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\employees\" />
+  </ItemGroup>
+
 </Project>
