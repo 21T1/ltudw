@@ -1,30 +1,47 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SV21T1020228.BusinessLayers;
 using SV21T1020228.DomainModels;
+using SV21T1020228.Web.AppCodes;
+using SV21T1020228.Web.Models;
 
 namespace SV21T1020228.Web.Controllers
 {
     public class CategoryController : Controller
     {
         public const int PAGE_SIZE = 20;
+        private const string CATEGORY_SEARCH_CONDITION = "CategorySearchCondition";
 
-        public IActionResult Index(int page = 1, string searchValue = "")
+        public IActionResult Index()
+        {
+            PaginationSearchInput? condition = ApplicationContext.GetSessionData<PaginationSearchInput>(CATEGORY_SEARCH_CONDITION);
+            if (condition == null)
+            {
+                condition = new PaginationSearchInput()
+                {
+                    Page = 1,
+                    PageSize = PAGE_SIZE,
+                    SearchValue = ""
+                };
+            }
+            return View(condition);
+        }
+
+        public IActionResult Search(PaginationSearchInput condition)
         {
             int rowCount;
-            var data = CommonDataService.ListOfCategories(out rowCount, page, PAGE_SIZE, searchValue ?? "");
-
-            int pageCount = rowCount / PAGE_SIZE;
-            if (rowCount % PAGE_SIZE > 0)
+            var data = CommonDataService.ListOfCategories(out rowCount, condition.Page, condition.PageSize, condition.SearchValue ?? "");
+            CategorySearchResult model = new CategorySearchResult()
             {
-                pageCount += 1;
-            }
+                Page = condition.Page,
+                PageSize = condition.PageSize,
+                SearchValue = condition.SearchValue ?? "",
+                RowCount = rowCount,
+                Data = data
+            };
 
-            ViewBag.Page = page;
-            ViewBag.RowCount = rowCount;
-            ViewBag.PageCount = pageCount;
-            ViewBag.searchValue = searchValue;
+            ApplicationContext.SetSessionData(CATEGORY_SEARCH_CONDITION, condition);
 
-            return View(data);
+            return View(model);
         }
 
         public IActionResult Create()
@@ -67,14 +84,39 @@ namespace SV21T1020228.Web.Controllers
         [HttpPost]
         public IActionResult Save(Category data)
         {
-            // TODO:
+            ViewBag.Title = data.CategoryID == 0 ? "Bổ sung loại hàng" : "Cập nhật thông tin loại hàng";
+
+            if (string.IsNullOrWhiteSpace(data.CategoryName))
+            {
+                ModelState.AddModelError(nameof(data.CategoryName), "Tên loại hàng không được để trống");
+            }
+            if (string.IsNullOrWhiteSpace(data.Description))
+            {
+                data.Description = "";
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("Edit", data);  //  Trả dữ liệu về View kèm theo các thông báo lỗi
+            }
+
             if (data.CategoryID == 0)
             {
-                CommonDataService.AddCategory(data);
+                int id = CommonDataService.AddCategory(data);
+                if (id <= 0)
+                {
+                    ModelState.AddModelError(nameof(data.CategoryName), "Tên loại hàng đã được sử dụng");
+                    return View("Edit", data);
+                }
             }
             else
             {
-                CommonDataService.UpdateCategory(data);
+                bool result = CommonDataService.UpdateCategory(data);
+                if (!result)
+                {
+                    ModelState.AddModelError(nameof(data.CategoryName), "Tên mặt hàng đã được sử dụng");
+                    return View("Edit", data);
+                }
             }
             return RedirectToAction("Index");
         }

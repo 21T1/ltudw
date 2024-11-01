@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Customer>
+﻿@model PaginationSearchInput
 @{
     ViewBag.Title = "Quản lý khách hàng";
 }
@@ -6,9 +6,10 @@
 <div class="box box-primary">
     <div class="box-body">
         <!-- Form nhập đầu vào tìm kiếm-->
-        <form action="~/Customer" method="get">
+        <form id="frmSearchInput" action="~/Customer/Search" method="get">
+            <input type="hidden" name="@nameof(Model.PageSize)" value="@Model.PageSize" />
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Nhập tên khách hàng cần tìm" autofocus name="searchValue" value="@ViewBag.SearchValue"/>
+                <input type="text" class="form-control" placeholder="Nhập tên khách hàng cần tìm" autofocus name="@nameof(Model.SearchValue)" value="@Model.SearchValue"/>
                 <div class="input-group-btn">
                     <button class="btn btn-info" type="submit">
                         <i class="fa fa-search"></i>
@@ -20,62 +21,41 @@
             </div>
         </form>
 
-        <p style="margin: 10px 0;">Có <b>@ViewBag.RowCount</b> khách hàng trong tổng số <b>@ViewBag.PageCount</b> trang</p>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped">
-                <thead>
-                    <tr class="bg-primary">
-                        <th>Tên khách hàng</th>
-                        <th>Tên giao dịch</th>
-                        <th>Số điện thoại</th>
-                        <th>Email</th>
-                        <th>Địa chỉ</th>
-                        <th>Tỉnh thành</th>
-                        <th>Bị khóa</th>
-                        <th style="width: 80px;"></th>
-                    </tr>
+        <!-- Hiển thị kết quả tìm kiếm -->
+        <div id="searchResult">
 
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.CustomerName</td>
-                            <td>@item.ContactName</td>
-                            <td>@item.Phone</td>
-                            <td>@item.Email</td>
-                            <td>@item.Address</td>
-                            <td>@item.Province</td>
-                            <td class="text-center">@(item.IsLocked ? "x" : "")</td>
-                            <td class="text-right">
-                                <a href="~/Customer/Edit/@item.CustomerID" class="btn btn-xs btn-info">
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                                <a href="~/Customer/Delete/@item.CustomerID" class="btn btn-xs btn-danger">
-                                    <i class="fa fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-
-            </table>
-        </div>
-        <div class="text-center">
-            <ul class="pagination">
-                @for (int p = 1; p <= ViewBag.PageCount; p++)
-                {
-                    if (p == ViewBag.Page)
-                    {
-                        <li class="active"><a href="#">@p</a></li>
-                    }
-                    else
-                    {
-                        <li><a href="~/Customer?page=@p&searchValue=@ViewBag.SearchValue">@p</a></li>  
-                    }
-                }
-            </ul>
         </div>
     </div>
-
 </div>
+
+@section scripts {
+    <script>
+        function doSearch(page) {
+            var searchCondition = $("#frmSearchInput").serializeArray();
+            searchCondition.push({
+                name: "page",
+                value: page
+            });
+
+            var action = $("#frmSearchInput").prop("action");
+            var method = $("#frmSearchInput").prop("method");
+
+            $.ajax({
+                url: action,
+                type: method,
+                data: searchCondition,
+                success: function (data) {
+                    $("#searchResult").html(data)
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            doSearch(@Model.Page);
+            $("#frmSearchInput").submit(function (e) {
+                e.preventDefault();
+                doSearch(1);
+            })
+        })
+    </script>
+}

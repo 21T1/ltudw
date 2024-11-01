@@ -1,7 +1,6 @@
 ﻿using SV21T1020228.DataLayers;
 using SV21T1020228.DataLayers.SQL_Server;
 using SV21T1020228.DomainModels;
-using System.Reflection.Metadata.Ecma335;
 
 namespace SV21T1020228.BusinessLayers
 {
@@ -19,11 +18,7 @@ namespace SV21T1020228.BusinessLayers
         /// </summary>
         static CommonDataService()
         {
-            string connectionString =
-                @"uid=sa;pwd=123;
-                            database=LiteCommerce;
-                            server=Duckyy;
-                            TrustServerCertificate=true";
+            string connectionString = Configuration.ConnectionString;
 
             customerDB = new CustomerDAL(connectionString);
             categoryDB = new CategoryDAL(connectionString);
@@ -40,6 +35,16 @@ namespace SV21T1020228.BusinessLayers
         public static List<Province> ListOfProvinces()
         {
             return provinceDAL.List();
+        }
+
+        public static List<Category> ListOfCategories()
+        {
+            return categoryDB.List();
+        }
+
+        public static List<Supplier> ListOfSuppliers()
+        {
+            return supplierDB.List();
         }
 
         /// <summary>
@@ -285,6 +290,8 @@ namespace SV21T1020228.BusinessLayers
             rowCount = supplierDB.Count(searchValue);
             return supplierDB.List(page, pageSize, searchValue);
         }
+
+
 
         public static Supplier? GetSupplier(int id)
         {

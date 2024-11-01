@@ -1,30 +1,47 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SV21T1020228.BusinessLayers;
 using SV21T1020228.DomainModels;
+using SV21T1020228.Web.AppCodes;
+using SV21T1020228.Web.Models;
 
 namespace SV21T1020228.Web.Controllers
 {
     public class SupplierController : Controller
     {
         public const int PAGE_SIZE = 20;
+        private const string SUPPLIER_SEARCH_CONDITION = "SupplierSearchCondition";
 
-        public IActionResult Index(int page = 1, string searchValue = "")
+        public IActionResult Index()
+        {
+            PaginationSearchInput? condition = ApplicationContext.GetSessionData<PaginationSearchInput>(SUPPLIER_SEARCH_CONDITION);
+            if (condition == null)
+            {
+                condition = new PaginationSearchInput()
+                {
+                    Page = 1,
+                    PageSize = PAGE_SIZE,
+                    SearchValue = ""
+                };
+            }
+            return View(condition);
+        }
+
+        public IActionResult Search(PaginationSearchInput condition)
         {
             int rowCount;
-            var data = CommonDataService.ListOfSuppliers(out rowCount, page, PAGE_SIZE, searchValue ?? "");
-
-            int pageCount = rowCount / PAGE_SIZE;
-            if (rowCount % PAGE_SIZE > 0)
+            var data = CommonDataService.ListOfSuppliers(out rowCount, condition.Page, condition.PageSize, condition.SearchValue ?? "");
+            SupplierSearchResult model = new SupplierSearchResult()
             {
-                pageCount += 1;
-            }
+                Page = condition.Page,
+                PageSize = condition.PageSize,
+                SearchValue = condition.SearchValue ?? "",
+                RowCount = rowCount,
+                Data = data
+            };
 
-            ViewBag.Page = page;
-            ViewBag.RowCount = rowCount;
-            ViewBag.PageCount = pageCount;
-            ViewBag.searchValue = searchValue;
+            ApplicationContext.SetSessionData(SUPPLIER_SEARCH_CONDITION, condition);
 
-            return View(data);
+            return View(model);
         }
 
         public IActionResult Create()
@@ -68,15 +85,55 @@ namespace SV21T1020228.Web.Controllers
         [HttpPost]
         public IActionResult Save(Supplier data)
         {
-            //TODO: Kiểm soát dữ liệu
+            ViewBag.Title = data.SupplierID == 0 ? "Bổ sung nhà cung cấp" : "Cập nhật thông tin nhà cung cấp";
+
+            if (string.IsNullOrWhiteSpace(data.SupplierName))
+            {
+                ModelState.AddModelError(nameof(data.SupplierName), "Tên  không được để trống");
+            }
+            if (string.IsNullOrWhiteSpace(data.ContactName))
+            {
+                ModelState.AddModelError(nameof(data.ContactName), "Tên giao dịch không được để trống");
+            }
+            if (string.IsNullOrWhiteSpace(data.Phone))
+            {
+                ModelState.AddModelError(nameof(data.Phone), "Vui lòng nhập số điện thoại của nhà cung cấp");
+            }
+            if (string.IsNullOrWhiteSpace(data.Email))
+            {
+                ModelState.AddModelError(nameof(data.Email), "Vui lòng nhập email của nhà cung cấp");
+            }
+            if (string.IsNullOrWhiteSpace(data.Address))
+            {
+                ModelState.AddModelError(nameof(data.Address), "Vui lòng nhập địa chỉ của nhà cung cấp");
+            }
+            if (string.IsNullOrWhiteSpace(data.Province))
+            {
+                ModelState.AddModelError(nameof(data.Province), "Vui lòng chọn tỉnh thành của nhà cung cấp");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("Edit", data);
+            }
 
             if (data.SupplierID == 0)
             {
-                CommonDataService.AddSupplier(data);
+                int id = CommonDataService.AddSupplier(data);
+                if (id <= 0)
+                {
+                    ModelState.AddModelError(nameof(data.Email), "Email đã được sử dụng");
+                    return View("Edit", data);
+                }
             }
             else
             {
-                CommonDataService.UpdateSupplier(data);
+                bool result = CommonDataService.UpdateSupplier(data);
+                if (!result)
+                {
+                    ModelState.AddModelError(nameof(data.Email), "Email đã được sử dụng");
+                    return View("Edit", data);
+                }
             }
             return RedirectToAction("Index");
         }

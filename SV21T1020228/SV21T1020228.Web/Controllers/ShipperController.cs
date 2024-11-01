@@ -1,30 +1,47 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SV21T1020228.BusinessLayers;
 using SV21T1020228.DomainModels;
+using SV21T1020228.Web.AppCodes;
+using SV21T1020228.Web.Models;
 
 namespace SV21T1020228.Web.Controllers
 {
     public class ShipperController : Controller
     {
         public const int PAGE_SIZE = 20;
+        private const string SHIPPER_SEARCH_CONDITION = "ShipperSearchCondition";
 
-        public IActionResult Index(int page = 1, string searchValue = "")
+        public IActionResult Index()
+        {
+            PaginationSearchInput? condition = ApplicationContext.GetSessionData<PaginationSearchInput>(SHIPPER_SEARCH_CONDITION);
+            if (condition == null)
+            {
+                condition = new PaginationSearchInput()
+                {
+                    Page = 1,
+                    PageSize = PAGE_SIZE,
+                    SearchValue = ""
+                };
+            }
+            return View(condition);
+        }
+
+        public IActionResult Search(PaginationSearchInput condition)
         {
             int rowCount;
-            var data = CommonDataService.ListOfShippers(out rowCount, page, PAGE_SIZE, searchValue ?? "");
-
-            int pageCount = rowCount / PAGE_SIZE;
-            if (rowCount % PAGE_SIZE > 0)
+            var data = CommonDataService.ListOfShippers(out rowCount, condition.Page, condition.PageSize, condition.SearchValue ?? "");
+            ShipperSearchResult model = new ShipperSearchResult()
             {
-                pageCount += 1;
-            }
+                Page = condition.Page,
+                PageSize = condition.PageSize,
+                SearchValue = condition.SearchValue ?? "",
+                RowCount = rowCount,
+                Data = data
+            };
 
-            ViewBag.Page = page;
-            ViewBag.RowCount = rowCount;
-            ViewBag.PageCount = pageCount;
-            ViewBag.searchValue = searchValue;
+            ApplicationContext.SetSessionData(SHIPPER_SEARCH_CONDITION, condition);
 
-            return View(data);
+            return View(model);
         }
 
         public IActionResult Create()
@@ -68,15 +85,39 @@ namespace SV21T1020228.Web.Controllers
         [HttpPost]
         public IActionResult Save(Shipper data)
         {
-            //TODO: Kiểm soát dữ liệu
+            ViewBag.Title = data.ShipperID == 0 ? "Bổ sung người giao hàng" : "Cập nhật thông tin người giao hàng";
+
+            if (string.IsNullOrWhiteSpace(data.ShipperName))
+            {
+                ModelState.AddModelError(nameof(data.ShipperName), "Tên người giao hàng không được để trống");
+            }
+            if (string.IsNullOrWhiteSpace(data.Phone))
+            {
+                ModelState.AddModelError(nameof(data.Phone), "Vui lòng nhập số điện thoại của người giao hàng");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("Edit", data); 
+            }
 
             if (data.ShipperID == 0)
             {
-                CommonDataService.AddShipper(data);
+                int id = CommonDataService.AddShipper(data);
+                if (id <= 0)
+                {
+                    ModelState.AddModelError(nameof(data.Phone), "Số điện thoại đã được sử dụng");
+                    return View("Edit", data);
+                }
             }
             else
             {
-                CommonDataService.UpdateShipper(data);
+                bool result = CommonDataService.UpdateShipper(data);
+                if (!result)
+                {
+                    ModelState.AddModelError(nameof(data.Phone), "Số điện thoại đã được sử dụng");
+                    return View("Edit", data);
+                }
             }
             return RedirectToAction("Index");
         }

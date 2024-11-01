@@ -6091,4 +6091,8 @@
     <Folder Include="wwwroot\images\employees\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
 </Project>

@@ -4,7 +4,7 @@ using System.Data;
 
 namespace SV21T1020228.DataLayers.SQL_Server
 {
-    public class CategoryDAL : BaseDAL, ICommonDAL<Category>
+    public class CategoryDAL : BaseDAL, ICommonDAL<Category>, ISimpleQueryDAL<Category>
     {
         public CategoryDAL(string connectionString) : base(connectionString)
         {
@@ -15,15 +15,20 @@ namespace SV21T1020228.DataLayers.SQL_Server
             int id = 0;
             using (var connnection = OpenConnection())
             {
-                var sql = @"insert into Categories(CategoryName, Description)
-                     values (@CategoryName, @Description)
-                     select scope_identity();";
+                var sql = @"if exists (select * from Categories where CategoryName = @CategoryName)
+                                select -1;
+                            else
+                                begin
+                                    insert into Categories(CategoryName, Photo)
+                                    values (@CategoryName, @Photo)
+                                    select scope_identity()
+                                end";
                 var parameters = new
                 {
                     CategoryName = data.CategoryName ?? "",
                     Description = data.Description ?? "",
                 };
-                connnection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: CommandType.Text);
+                id = connnection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: CommandType.Text);
                 connnection.Close();
             }
             return id;
@@ -100,6 +105,19 @@ namespace SV21T1020228.DataLayers.SQL_Server
             return result;
         }
 
+        public List<Category> List(string searchValue = "")
+        {
+            List<Category> data = new List<Category>();
+            searchValue = $"%{searchValue}%";
+            using (var connection = OpenConnection())
+            {
+                var sql = @"select * from Categories where CategoryName like @CategoryName";
+                var parameters = new { CategoryName = searchValue };
+                data = connection.Query<Category>(sql: sql, param: parameters, commandType: CommandType.Text).ToList();
+            }
+            return data;
+        }
+
         public List<Category> List(int page = 1, int pageSize = 0, string searchValue = "")
         {
             List<Category> data = new List<Category>();
@@ -127,15 +145,30 @@ namespace SV21T1020228.DataLayers.SQL_Server
             return data;
         }
 
+        public List<Category> List()
+        {
+            List<Category> data = new List<Category>();
+            using (var connection = OpenConnection())
+            {
+                var sql = "select * from Categories";
+                data = connection.Query<Category>(sql: sql, commandType: System.Data.CommandType.Text).ToList();
+                connection.Close();
+            }
+            return data;
+        }
+
         public bool Update(Category data)
         {
             bool result = false;
             using (var connnection = OpenConnection())
             {
-                var sql = @"update Categories
-                            set CategoryName = @CategoryName,
-                                Description = @Description
-                            where CategoryID = @CategoryID";
+                var sql = @"if not exists (select * from Categories where CategoryID <> @CategoryID and CategoryName = @CategoryName)
+                            begin
+                                update Categories
+                                set CategoryName = @CategoryName,
+                                    Photo = @Photo
+                                where CategoryID = @CategoryID
+                            end";
                 var parameters = new
                 {
                     CategoryID = data.CategoryID,

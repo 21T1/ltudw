@@ -9,6 +9,7 @@
                 <label class="control-label col-sm-2">Họ và tên:</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" autofocus name="@nameof(Model.FullName)" value="@Model.FullName" />
+                    @Html.ValidationMessage(nameof(Model.FullName))
                 </div>
             </div>
             <div class="form-group">
@@ -16,7 +17,8 @@
                 <div class="col-sm-10">
                     <input type="hidden" name="@nameof(Model.BirthDate)" value="@Model.BirthDate" />
                     <input type="text" class="form-control date-picker" name="_birthDate" value="@Model.BirthDate.ToString("dd/MM/yyyy", new System.Globalization.CultureInfo("en-GB"))" />
-                </div>
+                    @Html.ValidationMessage(nameof(Model.BirthDate))
+                </div>    
             </div>
             <div class="form-group">
                 <label class="control-label col-sm-2">Địa chỉ:</label>
@@ -34,7 +36,8 @@
                 <label class="control-label col-sm-2">Email:</label>
                 <div class="col-sm-10">
                     <input type="email" class="form-control" name="@nameof(Model.Email)" value="@Model.Email" />
-                </div>
+                    @Html.ValidationMessage(nameof(Model.Email))
+                </div>     
             </div>
             <div class="form-group">
                 <div class="col-lg-offset-2 col-sm-10">

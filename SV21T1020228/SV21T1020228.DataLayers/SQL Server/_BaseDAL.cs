@@ -21,8 +21,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
         /// <returns></returns>
         protected SqlConnection OpenConnection()
         {
-            //SqlConnection connection = new SqlConnection(@"uid=sa;pwd=123;database=LiteCommerce;server=Duckyy;TrustServerCertificate=true;");
-            SqlConnection connection = new SqlConnection(@"Server=tcp:Duckyy;Database=LiteCommerceDB;User Id=sa;Password=123;Encrypt=true;TrustServerCertificate=true;");
+            SqlConnection connection = new SqlConnection(_connectionString);
             connection.Open();
             return connection;
         }

@@ -1,29 +1,94 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SV21T1020228.BusinessLayers;
+using SV21T1020228.DomainModels;
+using SV21T1020228.Web.AppCodes;
+using SV21T1020228.Web.Models;
 
 namespace SV21T1020228.Web.Controllers
 {
     public class ProductController : Controller
     {
+        public const int PAGE_SIZE = 20;
+        private const string PRODUCT_SEARCH_CONDITION = "ProductSearchCondition";
+
         public IActionResult Index()
         {
-            return View();
+            ProductSearchInput? condition = ApplicationContext.GetSessionData<ProductSearchInput>(PRODUCT_SEARCH_CONDITION);
+            if (condition == null)
+            {
+                condition = new ProductSearchInput()
+                {
+                    Page = 1,
+                    PageSize = PAGE_SIZE,
+                    SearchValue = "",
+                    SupplierID = 0,
+                    CategoryID = 0,
+                    MinPrice = 0,
+                    MaxPrice = 0
+                };
+            }
+            return View(condition);
+        }
+
+        public IActionResult Search(ProductSearchInput condition)
+        {
+            int rowCount;
+            var data = ProductDataService.ListOfProducts(out rowCount, condition.Page, condition.PageSize, condition.SearchValue ?? "", condition.SupplierID, condition.CategoryID, condition.MinPrice, condition.MaxPrice);
+            ProductSearchResult model = new ProductSearchResult()
+            {
+                Page = condition.Page,
+                PageSize = condition.PageSize,
+                SearchValue = condition.SearchValue ?? "",
+                SupplierID = condition.SupplierID,
+                CategoryID = condition.CategoryID,
+                MinPrice = condition.MinPrice,
+                MaxPrice = condition.MaxPrice,
+                RowCount = rowCount,
+                Data = data
+            };
+
+            ApplicationContext.SetSessionData(PRODUCT_SEARCH_CONDITION, condition);
+
+            return View(model);
         }
 
         public IActionResult Create()
         {
             ViewBag.Title = "Bổ sung mặt hàng";
-            return View("Edit");
+            var data = new Product()
+            {
+                ProductID = 0,
+                IsSelling = true,
+            };
+            return View("Edit", data);
         }
 
         public IActionResult Edit(int id = 0)
         {
             ViewBag.Title = "Cập nhật thông tin mặt hàng";
-            return View();
+            var data = ProductDataService.GetProduct(id);
+            if (data == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(data);
         }
 
         public IActionResult Delete(int id = 0)
         {
-            return View();
+            if (Request.Method == "POST")
+            {
+                ProductDataService.DeleteProduct(id);
+                return RedirectToAction("Index");
+            }
+
+            var data = ProductDataService.GetProduct(id);
+            if (data == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(data);
         }
 
         public IActionResult Photo(int id = 0, string method = "", int photoId = 0)
@@ -59,5 +124,47 @@ namespace SV21T1020228.Web.Controllers
                     return RedirectToAction("Index");
             }
         }
+
+        //[HttpPost]
+        //public IActionResult Save(Product data)
+        //{
+        //    ViewBag.Title = data.ProductID == 0 ? "Bổ sung mặt hàng" : "Cập nhật thông tin mặt hàng";
+
+        //    if (string.IsNullOrWhiteSpace(data.ProductName))
+        //    {
+        //        ModelState.AddModelError(nameof(data.ProductName), "Tên mặt hàng không được để trống");
+        //    }
+        //    if (string.IsNullOrWhiteSpace(data.ProductDescription))
+        //    {
+        //        data.ProductDescription = "";
+        //    }
+
+        //    //  Dựa vào ModelState để biết có tồn tại trường hợp lỗi nào không?
+        //    //      ModelState.IsValid()
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View("Edit", data);  //  Trả dữ liệu về View kèm theo các thông báo lỗi
+        //    }
+
+        //    if (data.CustomerID == 0)
+        //    {
+        //        int id = CommonDataService.AddCustomer(data);
+        //        if (id <= 0)
+        //        {
+        //            ModelState.AddModelError(nameof(data.Email), "Email đã được sử dụng");
+        //            return View("Edit", data);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        bool result = CommonDataService.UpdateCustomer(data);
+        //        if (!result)
+        //        {
+        //            ModelState.AddModelError(nameof(data.Email), "Email đã được sử dụng");
+        //            return View("Edit", data);
+        //        }
+        //    }
+        //    return RedirectToAction("Index");
+        //}
     }
 }

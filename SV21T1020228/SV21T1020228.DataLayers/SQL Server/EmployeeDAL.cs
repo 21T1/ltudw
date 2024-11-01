@@ -15,9 +15,14 @@ namespace SV21T1020228.DataLayers.SQL_Server
             int id = 0;
             using (var connnection = OpenConnection())
             {
-                var sql = @"insert into Employees(FullName, BirthDate, Address, Phone, Email, Photo, IsWorking)
-                     values (@FullName, @BirthDate, @Address, @Phone, @Email, @Photo, @IsWorking)
-                     select scope_identity();";
+                var sql = @"if exists (select * from Employees where Email = @Email)
+                                select -1;
+                            else
+                                begin
+                                    insert into Employees(FullName, BirthDate, Address, Phone, Email, Photo, IsWorking)
+                                    values (@FullName, @BirthDate, @Address, @Phone, @Email, @Photo, @IsWorking)
+                                    select scope_identity()
+                                end;";
                 var parameters = new
                 {
                     FullName = data.FullName ?? "",
@@ -28,7 +33,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
                     Photo = data.Photo,
                     IsWorking = data.IsWorking,
                 };
-                connnection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: CommandType.Text);
+                id = connnection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: CommandType.Text);
                 connnection.Close();
             }
             return id;
@@ -137,15 +142,18 @@ namespace SV21T1020228.DataLayers.SQL_Server
             bool result = false;
             using (var connnection = OpenConnection())
             {
-                var sql = @"update Employees
-                            set FullName = @FullName,
-                                BirthDate = @BirthDate,
-                                Address = @Address,
-                                Phone = @Phone,
-                                Email = @Email,
-                                Photo = @Photo,
-                                IsWorking = @IsWorking
-                            where EmployeeID = @EmployeeID";
+                var sql = @"if not exists (select * from Employee where EmployeeID <> @EmployeeID and Email = @Email)
+                                begin
+                                    update Employees
+                                    set FullName = @FullName,
+                                        BirthDate = @BirthDate,
+                                        Address = @Address,
+                                        Phone = @Phone,
+                                        Email = @Email,
+                                        Photo = @Photo,
+                                        IsWorking = @IsWorking
+                                    where EmployeeID = @EmployeeID
+                                end";
                 var parameters = new
                 {
                     EmployeeID = data.EmployeeID,

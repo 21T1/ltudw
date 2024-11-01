@@ -1,7 +1,7 @@
-﻿@{
+﻿@model Product
+@{
 }
 <div class="box box-primary">
-
     <div class="box-header with-border ">
         <h3 class="box-title">Thông tin mặt hàng</h3>
         <div class="box-tools pull-right">
@@ -12,29 +12,38 @@
     </div>
 
     <div class="box-body">
-        <form class="form-horizontal" action="#" method="post" enctype="multipart/form-data">
-
+        <form class="form-horizontal" action="~/Product/Save" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="@nameof(Model.ProductID)" value="@Model.ProductID">
             <div class="form-group">
                 <label class="control-label col-sm-2">Tên mặt hàng:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" autofocus name="ProductName">
+                    <input type="text" class="form-control" autofocus name="@nameof(Model.ProductName)" value="@Model.ProductName" >
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="control-label col-sm-2">Mô tả:</label>
                 <div class="col-sm-10">
-                    <textarea class="form-control" rows="3" name="ProductDescription"></textarea>
+                    <textarea class="form-control" rows="3" name="@nameof(Model.ProductDescription)" value="@Model.ProductDescription" ></textarea>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="control-label col-sm-2">Loại hàng:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" name="CategoryId">
+                    <select class="form-control" name="@nameof(Model.CategoryID)" value="@Model.CategoryID" >
                         <option>-- Loại hàng --</option>
-                        <option>Mỹ phẩm</option>
-                        <option>Thực phẩm</option>
+                        @foreach (var item in SV21T1020228.BusinessLayers.CommonDataService.ListOfCategories())
+                        {
+                            if (item.CategoryID == Model.CategoryID)
+                            {
+                                <option value="@item.CategoryID" selected>@item.CategoryID</option>
+                            }
+                            else
+                            {
+                                <option value="@item.CategoryID">@item.CategoryID</option>
+                            }
+                        }
                     </select>
                 </div>
             </div>
@@ -42,10 +51,19 @@
             <div class="form-group">
                 <label class="control-label col-sm-2">Nhà cung cấp:</label>
                 <div class="col-sm-10">
-                    <select class="form-control" name="SupplierID">
+                    <select class="form-control select2" name="SupplierID">
                         <option>-- Nhà cung cấp --</option>
-                        <option>Công ty TNHH Thành Công</option>
-                        <option>Vina Foods</option>
+                        @foreach (var item in SV21T1020228.BusinessLayers.CommonDataService.ListOfSuppliers())
+                        {
+                            if (item.SupplierID == Model.SupplierID)
+                            {
+                                <option value="@item.SupplierID" selected>@item.SupplierID</option>
+                            }
+                            else
+                            {
+                                <option value="@item.SupplierID">@item.SupplierID</option>
+                            }
+                        }
                     </select>
                 </div>
             </div>
@@ -53,21 +71,23 @@
             <div class="form-group">
                 <label class="control-label col-sm-2">Đơn vị tính:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="Unit">
+                    <input type="text" class="form-control" name="@nameof(Model.Unit)" value="@Model.Unit">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="control-label col-sm-2">Giá hàng:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="Price">
+                    <input type="text" class="form-control" name="@nameof(Model.Price)" value="@Model.Price">
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="col-lg-offset-2 col-sm-10">
                     <div class="checkbox">
-                        <label><input type="checkbox" value="true" checked name="IsSelling">Hiện đang được bán</label>
+                        <label>
+                            <input type="checkbox" value="true" checked name="@nameof(Model.IsSelling) value="false" @(Model.IsSelling ? "checked" : "")> Hiện đang được bán
+                        </label>
                     </div>
                 </div>
             </div>
@@ -75,6 +95,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2">Ảnh minh họa:</label>
                 <div class="col-sm-10">
+                    <input type="hidden" name="@nameof(Model.Photo)" value="@Model.Photo" />
                     <input type="file" class="form-control" name="uploadPhoto" accept="image/*"
                            onchange="document.getElementById('Photo').src = window.URL.createObjectURL(this.files[0])" />
                 </div>
@@ -82,8 +103,7 @@
 
             <div class="form-group">
                 <div class="col-lg-offset-2 col-sm-10">
-                    <input type="hidden" name="Photo" value="macbook.png" />
-                    <img id="Photo" src="~/images/products/macbook.png" class="img img-bordered" style="width:200px" />
+                    <img id="Photo" src="~/images/products/@Model.Photo" class="img img-bordered" style="width:200px" />
                 </div>
             </div>
 

@@ -4,7 +4,7 @@ using System.Data;
 
 namespace SV21T1020228.DataLayers.SQL_Server
 {
-    public class SupplierDAL : BaseDAL, ICommonDAL<Supplier>
+    public class SupplierDAL : BaseDAL, ICommonDAL<Supplier>, ISimpleQueryDAL<Supplier>
     {
         public SupplierDAL(string connectionString) : base(connectionString)
         {
@@ -15,9 +15,14 @@ namespace SV21T1020228.DataLayers.SQL_Server
             int id = 0;
             using (var connnection = OpenConnection())
             {
-                var sql = @"insert into Suppliers(SupplierName, ContactName, Province, Address, Phone, Email)
-                     values (@SupplierName, @ContactName, @Province, @Address, @Phone, @Email)
-                     select scope_identity();";
+                var sql = @"if exists (select * from Suppliers where Email = @Email)
+                                select -1;
+                            else
+                                begin
+                                    insert into Suppliers(SupplierName, ContactName, Province, Address, Phone, Email)
+                                    values (@SupplierName, @ContactName, @Province, @Address, @Phone, @Email)
+                                    select scope_identity()
+                                end;";
                 var parameters = new
                 {
                     SupplierName = data.SupplierName ?? "",
@@ -27,7 +32,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
                     Phone = data.Phone,
                     Email = data.Email
                 };
-                connnection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: CommandType.Text);
+                id = connnection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: CommandType.Text);
                 connnection.Close();
             }
             return id;
@@ -104,6 +109,18 @@ namespace SV21T1020228.DataLayers.SQL_Server
             return result;
         }
 
+        public List<Supplier> List()
+        {
+            List<Supplier> data = new List<Supplier>();
+            using (var connection = OpenConnection())
+            {
+                var sql = "select * from Suppliers";
+                data = connection.Query<Supplier>(sql: sql, commandType: System.Data.CommandType.Text).ToList();
+                connection.Close();
+            }
+            return data;
+        }
+
         public List<Supplier> List(int page = 1, int pageSize = 0, string searchValue = "")
         {
             List<Supplier> data = new List<Supplier>();
@@ -136,14 +153,17 @@ namespace SV21T1020228.DataLayers.SQL_Server
             bool result = false;
             using (var connnection = OpenConnection())
             {
-                var sql = @"update Suppliers
-                            set SupplierName = @SupplierName,
-                                ContactName = @ContactName,
-                                Province = @Province,
-                                Address = @Address,
-                                Phone = @Phone,
-                                Email = @Email
-                            where SupplierID = @SupplierID";
+                var sql = @"if not exists (select * from Suppliers where SupplierID <> @SupplierID and Email = @Email)
+                            begin
+                                update Suppliers
+                                set SupplierName = @SupplierName,
+                                    ContactName = @ContactName,
+                                    Province = @Province,
+                                    Address = @Address,
+                                    Phone = @Phone,
+                                    Email = @Email
+                                where SupplierID = @SupplierID
+                            end";
                 var parameters = new
                 {
                     SupplierID = data.SupplierID,
