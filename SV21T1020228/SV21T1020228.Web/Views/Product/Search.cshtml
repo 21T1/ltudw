@@ -22,8 +22,7 @@
             {
                 <tr>
                      <td>
-                         <!--(string.IsNullOrWhiteSpace() ? "" : "")-->
-                         <img src="~/images/products/macbook.png" style="width:100%" alt="" />
+                         <img src="~/images/products/@(string.IsNullOrWhiteSpace(item.Photo) ? "no_img.jpg" : item.Photo)" style="width:100%" alt="" />
                      </td>
                      <td>@item.ProductName</td>
                      <td>@item.Unit</td>

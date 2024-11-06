@@ -1,0 +1,23 @@
+﻿@model ProductPhoto
+@{}
+
+<td style="vertical-align:middle">
+    <img src="~/Images/Products/@Model.Photo" alt="" style="width:100px" />
+</td>
+<td style="vertical-align:middle;">
+    @Model.Description
+</td>
+<td style="vertical-align:middle;" name="@nameof(Model.DisplayOrder)">@Model.DisplayOrder</td>
+<td style="vertical-align:middle;">
+    <label>
+        <input type="checkbox" name="@nameof(Model.IsHidden) value="false" @(Model.IsHidden ? "checked" : "")>
+    </label>
+</td>
+<td style="vertical-align:middle; text-align:right">
+    <a class="btn btn-xs btn-primary" href="~/Product/Photo/@Model.ProductID?method=edit&photoId=@Model.PhotoID">
+        <i class="fa fa-edit"></i>
+    </a>
+    <a class="btn btn-xs btn-danger" href="~/Product/Photo/@Model.ProductID?method=delete&photoId=@Model.PhotoID" onclick="return confirm('Xóa ảnh của mặt hàng hay không?')">
+        <i class="fa fa-trash"></i>
+    </a>
+</td>

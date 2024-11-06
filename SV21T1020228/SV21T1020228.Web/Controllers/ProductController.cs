@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SV21T1020228.BusinessLayers;
+using SV21T1020228.DataLayers;
 using SV21T1020228.DomainModels;
 using SV21T1020228.Web.AppCodes;
 using SV21T1020228.Web.Models;
@@ -55,18 +56,20 @@ namespace SV21T1020228.Web.Controllers
         public IActionResult Create()
         {
             ViewBag.Title = "Bổ sung mặt hàng";
-            var data = new Product()
+            Product data = new Product()
             {
                 ProductID = 0,
                 IsSelling = true,
             };
+
             return View("Edit", data);
         }
 
         public IActionResult Edit(int id = 0)
         {
             ViewBag.Title = "Cập nhật thông tin mặt hàng";
-            var data = ProductDataService.GetProduct(id);
+            //var data = ProductDataService.GetProduct(id);
+            Product data = ProductDataService.GetProduct(id);
             if (data == null)
             {
                 return RedirectToAction("Index");
@@ -93,14 +96,22 @@ namespace SV21T1020228.Web.Controllers
 
         public IActionResult Photo(int id = 0, string method = "", int photoId = 0)
         {
+            ProductPhoto data;
             switch (method)
             {
                 case "add":
                     ViewBag.Title = "Bổ sung ảnh cho mặt hàng";
-                    return View();
+                    data = new ProductPhoto
+                    {
+                        PhotoID = 0,
+                        ProductID = id,
+                        IsHidden = false
+                    };
+                    return View(data);
                 case "edit":
                     ViewBag.Title = "Thay đổi ảnh của mặt hàng";
-                    return View();
+                    data = ProductDataService.GetProductPhoto(photoId);
+                    return View(data);
                 case "delete":
                     return RedirectToAction("Edit", new { id = id });
                 default:
@@ -110,61 +121,98 @@ namespace SV21T1020228.Web.Controllers
 
         public IActionResult Attribute(int id = 0, string method = "", int attributeId = 0)
         {
+            ProductAttribute data;
             switch (method)
             {
                 case "add":
                     ViewBag.Title = "Bổ sung thuộc tính cho mặt hàng";
-                    return View();
+                    data = new ProductAttribute
+                    {
+                        ProductID = id,
+                        AttributeID = 0
+                    };
+                    return View(data);
                 case "edit":
                     ViewBag.Title = "Thay đổi thuộc tính của mặt hàng";
-                    return View();
+                    data = ProductDataService.GetProductAttribute(attributeId);
+                    return View(data);
                 case "delete":
+                    return RedirectToAction("Edit", new { id = id });
+                case "save":
+
                     return RedirectToAction("Edit", new { id = id });
                 default:
                     return RedirectToAction("Index");
             }
         }
 
-        //[HttpPost]
-        //public IActionResult Save(Product data)
-        //{
-        //    ViewBag.Title = data.ProductID == 0 ? "Bổ sung mặt hàng" : "Cập nhật thông tin mặt hàng";
+        [HttpPost]
+        public IActionResult Save(Product data, IFormFile? uploadPhoto)
+        {
+            ViewBag.Title = data.ProductID == 0 ? "Bổ sung mặt hàng" : "Cập nhật thông tin mặt hàng";
 
-        //    if (string.IsNullOrWhiteSpace(data.ProductName))
-        //    {
-        //        ModelState.AddModelError(nameof(data.ProductName), "Tên mặt hàng không được để trống");
-        //    }
-        //    if (string.IsNullOrWhiteSpace(data.ProductDescription))
-        //    {
-        //        data.ProductDescription = "";
-        //    }
+            if (string.IsNullOrWhiteSpace(data.ProductName))
+            {
+                ModelState.AddModelError(nameof(data.ProductName), "Tên mặt hàng không được để trống");
+            }
+            if (string.IsNullOrWhiteSpace(data.ProductDescription))
+            {
+                data.ProductDescription = "";
+            }
+            if (data.CategoryID == 0)
+            {
+                ModelState.AddModelError(nameof(data.CategoryID), "Vui lòng chọn loại hàng");
+            }
+            if (data.SupplierID == 0)
+            {
+                ModelState.AddModelError(nameof(data.SupplierID), "Vui lòng chọn nhà cung cấp");
+            }
+            if (string.IsNullOrWhiteSpace(data.Unit))
+            {
+                ModelState.AddModelError(nameof(data.Unit), "Vui lòng nhập đơn vị tính");
+            }
+         
+            if (data.Price == null) {
+                data.Price = 0;
+            }
+            if (!ModelState.IsValid)
+            {
+                return View("Edit", data);  //  Trả dữ liệu về View kèm theo các thông báo lỗi
+            }
 
-        //    //  Dựa vào ModelState để biết có tồn tại trường hợp lỗi nào không?
-        //    //      ModelState.IsValid()
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View("Edit", data);  //  Trả dữ liệu về View kèm theo các thông báo lỗi
-        //    }
+            // Xử lý với ảnh
+            if (uploadPhoto != null)
+            {
+                string fileName = $"{DateTime.Now.Ticks}--{uploadPhoto.FileName}";
+                string filePath = Path.Combine(ApplicationContext.WebRootPath, @"images\\product", fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    uploadPhoto.CopyTo(stream);
+                }
+                data.Photo = fileName;
+            }
 
-        //    if (data.CustomerID == 0)
-        //    {
-        //        int id = CommonDataService.AddCustomer(data);
-        //        if (id <= 0)
-        //        {
-        //            ModelState.AddModelError(nameof(data.Email), "Email đã được sử dụng");
-        //            return View("Edit", data);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        bool result = CommonDataService.UpdateCustomer(data);
-        //        if (!result)
-        //        {
-        //            ModelState.AddModelError(nameof(data.Email), "Email đã được sử dụng");
-        //            return View("Edit", data);
-        //        }
-        //    }
-        //    return RedirectToAction("Index");
-        //}
+
+            if (data.ProductID == 0)
+            {
+                int id = ProductDataService.AddProduct(data);
+                if (id < 0)
+                {
+                    ModelState.AddModelError(nameof(data.ProductName), "Tên mặt hàng đã được sử dụng");
+                    return View("Edit", data);
+                }
+            }
+            else
+            {
+                bool result = ProductDataService.UpdateProduct(data);
+                if (!result)
+                {
+                    ModelState.AddModelError(nameof(data.ProductName), "Tên mặt hàng đã được sử dụng");
+                    return View("Edit", data);
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

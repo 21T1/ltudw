@@ -1,9 +1,7 @@
 ﻿using Dapper;
 using SV21T1020228.DomainModels;
 using System;
-using System.Buffers;
 using System.Data;
-using System.Diagnostics;
 
 namespace SV21T1020228.DataLayers.SQL_Server
 {
@@ -230,7 +228,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
             bool result = false;
             using (var connection = OpenConnection())
             {
-                var sql = @"if exists(select * from Orders where ProductID = @ProductID)
+                var sql = @"if exists(select * from OrderDetails where ProductID = @ProductID)
                                 select 1
                             else
                                 select 0";
@@ -247,7 +245,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
         public List<Product> List(int page = 1, int pageSize = 0, string searchValue = "", int categoryID = 0, int supplierID = 0, decimal minPrice = 0, decimal maxPrice = 0)
         {
             List<Product> data = new List<Product>();
-            searchValue = $" %{searchValue}%";
+            searchValue = $"%{searchValue}%";
             using (var connection = OpenConnection())
             {
                 var sql = @"select *
@@ -290,7 +288,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
                 {
                     productID
                 };
-                data = connection.Query<ProductAttribute>(sql: sql, commandType: CommandType.Text).ToList();
+                data = connection.Query<ProductAttribute>(sql: sql, param: parameters, commandType: CommandType.Text).ToList();
                 connection.Close();
             }
             return data;
@@ -306,7 +304,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
                 {
                     productID
                 };
-                data = connection.Query<ProductPhoto>(sql: sql, commandType: CommandType.Text).ToList();
+                data = connection.Query<ProductPhoto>(sql: sql, param: parameters, commandType: CommandType.Text).ToList();
                 connection.Close();
             }
             return data;

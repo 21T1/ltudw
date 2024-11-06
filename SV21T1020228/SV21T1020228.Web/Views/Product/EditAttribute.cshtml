@@ -1,0 +1,14 @@
+﻿@model ProductAttribute
+@{}
+
+<td style="vertical-align:middle" name="@nameof(Model.AttributeName)">@Model.AttributeName</td>
+<td style="vertical-align:middle;" name="@nameof(Model.AttributeValue)">@Model.AttributeValue</td>
+<td style="vertical-align:middle;" name="@nameof(Model.DisplayOrder)">@Model.DisplayOrder</td>
+<td style="vertical-align:middle; text-align:right">
+    <a class="btn btn-xs btn-primary" href="~/Product/Attribute/@Model.ProductID?method=edit&attributeId=@Model.AttributeID">
+        <i class="fa fa-edit"></i>
+    </a>
+    <a class="btn btn-xs btn-danger" href="~/Product/Attribute/@Model.ProductID?method=delete&attributeId=@Model.AttributeID" onclick="return confirm('Xóa thuộc tính này của mặt hàng?')">
+        <i class="fa fa-trash"></i>
+    </a>
+</td>
