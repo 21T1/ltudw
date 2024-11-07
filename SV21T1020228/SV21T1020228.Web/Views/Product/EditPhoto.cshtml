@@ -8,11 +8,7 @@
     @Model.Description
 </td>
 <td style="vertical-align:middle;" name="@nameof(Model.DisplayOrder)">@Model.DisplayOrder</td>
-<td style="vertical-align:middle;">
-    <label>
-        <input type="checkbox" name="@nameof(Model.IsHidden) value="false" @(Model.IsHidden ? "checked" : "")>
-    </label>
-</td>
+<td style="vertical-align:middle;">@(Model.IsHidden ? "X" : "")</td>
 <td style="vertical-align:middle; text-align:right">
     <a class="btn btn-xs btn-primary" href="~/Product/Photo/@Model.ProductID?method=edit&photoId=@Model.PhotoID">
         <i class="fa fa-edit"></i>

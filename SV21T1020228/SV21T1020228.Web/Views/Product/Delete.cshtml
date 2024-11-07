@@ -26,7 +26,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-2">Giá hàng:</label>
                 <div class="col-sm-10">
-                    <p class="form-control-static form-control">@Model.Price</p>
+                    <p class="form-control-static form-control">@Model.Price.ToString("#,0", new System.Globalization.CultureInfo("vi-VI")) VND</p>
                 </div>
             </div>
             <div class="form-group">

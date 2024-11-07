@@ -47,7 +47,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
             int id = 0;
             using (var connnection = OpenConnection())
             {
-                var sql = @"if exists (select * from ProductAttributes where AttributeName = @AttributeName)
+                var sql = @"if exists (select * from ProductAttributes where AttributeName = @AttributeName and ProductID = @ProductID)
                                 select -1;
                             else
                                 begin
@@ -73,14 +73,9 @@ namespace SV21T1020228.DataLayers.SQL_Server
             int id = 0;
             using (var connnection = OpenConnection())
             {
-                var sql = @"if exists (select * from ProductPhotos where Photo = @Photo)
-                                select -1;
-                            else
-                                begin
-                                    insert into ProductPhotos(ProductID, Photo, Description, DisplayOrder, IsHidden)
-                                    values (@ProductID, @Photo, @Description, @DisplayOrder, @IsHidden)
-                                    select scope_identity()
-                                end";
+                var sql = @"insert into ProductPhotos(ProductID, Photo, Description, DisplayOrder, IsHidden)
+                            values (@ProductID, @Photo, @Description, @DisplayOrder, @IsHidden)
+                            select scope_identity()";
                 var parameters = new
                 {
                     ProductID = data.ProductID,
@@ -126,13 +121,15 @@ namespace SV21T1020228.DataLayers.SQL_Server
             bool result = false;
             using (var connection = OpenConnection())
             {
-                var sql = @"delete from Products 
-                            where ProductID = @ProductID";
+                var sql = @"delete from ProductAttributes where ProductID = @ProductID
+                            delete from ProductPhotos where ProductID = @ProductID
+                            delete from Products where ProductID = @ProductID";
                 var parameters = new
                 {
                     productID
                 };
                 result = connection.Execute(sql: sql, param: parameters, commandType: CommandType.Text) > 0;
+
                 connection.Close();
             }
             return result;
@@ -315,7 +312,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
             bool result = false;
             using (var connnection = OpenConnection())
             {
-                var sql = @"if not exists (select * from Products where ProductID <> @ProductID)
+                var sql = @"if not exists (select * from Products where ProductID <> @ProductID and ProductName = @ProductName)
                             begin
                                 update Products
                                 set ProductName = @ProductName,
@@ -349,13 +346,13 @@ namespace SV21T1020228.DataLayers.SQL_Server
             bool result = false;
             using (var connnection = OpenConnection())
             {
-                var sql = @"if not exists (select * from ProductAttributes where AttributeID <> @AttributeID and AttributeName = @AttributeName)
+                var sql = @"if exists (select * from ProductAttributes where AttributeID <> @AttributeID and AttributeName = @AttributeName)
                                 begin
                                     update ProductAttributes
                                     set ProductID = @ProductID, 
                                         AttributeName = @AttributeName, 
                                         AttributeValue = @AttributeValue, 
-                                        DisplayOrder = @DisplayOrder)
+                                        DisplayOrder = @DisplayOrder
                                     where AttributeID = @AttributeID
                                 end";
                 var parameters = new
@@ -377,16 +374,12 @@ namespace SV21T1020228.DataLayers.SQL_Server
             bool result = false;
             using (var connnection = OpenConnection())
             {
-                var sql = @"if exists (select * from ProductPhotos where PhotoID <> @PhotoID and Photo = @Photo)
-                                begin
-                                    update ProductPhotos
-                                    set ProductID = data.ProductID,
-                                        Photo = data.Photo,
-                                        Description = data.Description ?? "",
-                                        DisplayOrder = data.DisplayOrder,
-                                        IsHidden = data.IsHidden
-                                    where PhotoID = @PhotoID
-                                end";
+                var sql = @"update ProductPhotos
+                            set Photo = @Photo,
+                                Description = @Description,
+                                DisplayOrder = @DisplayOrder,
+                                IsHidden = @IsHidden
+                             where PhotoID = @PhotoID";
                 var parameters = new
                 {
                     PhotoID = data.PhotoID,

@@ -8,7 +8,7 @@
         public int SupplierID { get; set; }
         public int CategoryID { get; set; }
         public string Unit { get; set; } = string.Empty;
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
         public string Photo { get; set; } = string.Empty;
         public bool IsSelling { get; set; }
     }

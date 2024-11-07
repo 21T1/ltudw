@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SV21T1020228.BusinessLayers;
 using SV21T1020228.DataLayers;
 using SV21T1020228.DomainModels;
 using SV21T1020228.Web.AppCodes;
 using SV21T1020228.Web.Models;
+using System;
 
 namespace SV21T1020228.Web.Controllers
 {
@@ -113,10 +115,50 @@ namespace SV21T1020228.Web.Controllers
                     data = ProductDataService.GetProductPhoto(photoId);
                     return View(data);
                 case "delete":
+                    ProductDataService.DeletePhoto(photoId);
                     return RedirectToAction("Edit", new { id = id });
                 default:
                     return RedirectToAction("Index");
             }
+        }
+
+        [HttpPost]
+        public IActionResult SavePhoto(ProductPhoto data, IFormFile? uploadPhoto)
+        {
+            ViewBag.Title = (data.PhotoID == 0 ? "Bổ sung" : "Thay đổi ảnh") + " cho mặt hàng";
+
+            // TODO: Xử lý displayOrder
+
+            // Xử lý với ảnh
+            if (uploadPhoto == null)
+            {
+                if (data.Photo == null)
+                {
+                    ModelState.AddModelError(nameof(data.Photo), "Vui lòng thêm ảnh mặt hàng");
+                    return View("Photo", data);
+                }
+            }       
+            else 
+            {
+                string fileName = $"{DateTime.Now.Ticks}--{uploadPhoto.FileName}";
+                string filePath = Path.Combine(ApplicationContext.WebRootPath, @"images\\products", fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    uploadPhoto.CopyTo(stream);
+                }
+                data.Photo = fileName;
+            }
+
+            if (data.PhotoID == 0) {
+                ProductDataService.AddPhoto(data);
+            } 
+            else
+            {
+                ProductDataService.UpdatePhoto(data);
+            }
+
+            var product = ProductDataService.GetProduct(data.ProductID);
+            return View("Edit", product);
         }
 
         public IActionResult Attribute(int id = 0, string method = "", int attributeId = 0)
@@ -137,9 +179,7 @@ namespace SV21T1020228.Web.Controllers
                     data = ProductDataService.GetProductAttribute(attributeId);
                     return View(data);
                 case "delete":
-                    return RedirectToAction("Edit", new { id = id });
-                case "save":
-
+                    ProductDataService.DeleteAttribute(attributeId);
                     return RedirectToAction("Edit", new { id = id });
                 default:
                     return RedirectToAction("Index");
@@ -147,7 +187,51 @@ namespace SV21T1020228.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Save(Product data, IFormFile? uploadPhoto)
+        public IActionResult SaveAttribute(ProductAttribute data)
+        {
+            ViewBag.Title = (data.AttributeID == 0 ? "Bổ sung" : "Thay đổi thuộc tính") + " cho mặt hàng";
+
+            if (string.IsNullOrWhiteSpace(data.AttributeName))
+            {
+                ModelState.AddModelError(nameof(data.AttributeName), "Vui lòng nhập tên thuộc tính");
+            }
+            if (string.IsNullOrWhiteSpace(data.AttributeValue))
+            {
+                ModelState.AddModelError(nameof(data.AttributeValue), "Thứ tự hiển thị không được để trống");
+            }
+            // TODO: Xử lý displayOrder
+
+            if (!ModelState.IsValid)
+            {
+                return View("Attribute", data);
+            }
+
+            if (data.AttributeID == 0)
+            {
+                long id = ProductDataService.AddAttribute(data);
+                Console.WriteLine(data.ProductID);
+                if (id < 0)
+                {
+                    ModelState.AddModelError(nameof(data.AttributeName), "Tên thuộc tính đã được sử dụng");
+                    return View("Attribute", data);
+                }
+            }
+            else
+            {
+                bool result = ProductDataService.UpdateAttribute(data);
+                if (!result)
+                {
+                    ModelState.AddModelError(nameof(data.AttributeName), "Tên thuộc tính đã được sử dụng");
+                    return View("Attribute", data);
+                }
+            }
+
+            var product = ProductDataService.GetProduct(data.ProductID);
+            return View("Edit", product);
+        }
+
+        [HttpPost]
+        public IActionResult Save(Product data, IFormFile? uploadPhoto, String _price)
         {
             ViewBag.Title = data.ProductID == 0 ? "Bổ sung mặt hàng" : "Cập nhật thông tin mặt hàng";
 
@@ -171,9 +255,14 @@ namespace SV21T1020228.Web.Controllers
             {
                 ModelState.AddModelError(nameof(data.Unit), "Vui lòng nhập đơn vị tính");
             }
-         
-            if (data.Price == null) {
-                data.Price = 0;
+
+            if (Decimal.TryParse(_price, out decimal price) && (price >= 0))
+            {
+                data.Price = price;
+            } 
+            else
+            {
+                ModelState.AddModelError(nameof(data.Price), "Giá cả không hợp lệ");
             }
             if (!ModelState.IsValid)
             {
@@ -184,7 +273,7 @@ namespace SV21T1020228.Web.Controllers
             if (uploadPhoto != null)
             {
                 string fileName = $"{DateTime.Now.Ticks}--{uploadPhoto.FileName}";
-                string filePath = Path.Combine(ApplicationContext.WebRootPath, @"images\\product", fileName);
+                string filePath = Path.Combine(ApplicationContext.WebRootPath, @"images\\products", fileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     uploadPhoto.CopyTo(stream);
