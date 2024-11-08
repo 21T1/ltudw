@@ -280,7 +280,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
             List<ProductAttribute> data = new List<ProductAttribute>();
             using (var connection = OpenConnection())
             {
-                var sql = "select * from ProductAttributes where ProductID = @ProductID";
+                var sql = "select * from ProductAttributes where ProductID = @ProductID order by DisplayOrder ASC";
                 var parameters = new
                 {
                     productID
@@ -296,7 +296,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
             List<ProductPhoto> data = new List<ProductPhoto>();
             using (var connection = OpenConnection())
             {
-                var sql = "select * from ProductPhotos where ProductID = @ProductID";
+                var sql = "select * from ProductPhotos where ProductID = @ProductID  order by DisplayOrder ASC";
                 var parameters = new
                 {
                     productID

@@ -107,7 +107,7 @@
 
             <div class="form-group">
                 <div class="col-lg-offset-2 col-sm-10">
-                    <img id="Photo" src="~/images/products/@Model.Photo" class="img img-bordered" style="width:200px" />
+                    <img id="Photo" src="~/images/products/@(string.IsNullOrWhiteSpace(Model.Photo) ? "no_img.gif" : Model.Photo)" class="img img-bordered" style="width:200px" />
                 </div>
             </div>
 
@@ -157,12 +157,25 @@
                     @{
                         List<ProductPhoto> listPhotos = SV21T1020228.BusinessLayers.ProductDataService.ListPhotos(Model.ProductID);
                     }
-                    @for (int i = 0; i < listPhotos.Count; i++)
+                    @foreach (var photo in listPhotos) 
                     {
                         <tr>
-                            @{
-                                await Html.RenderPartialAsync("EditPhoto", listPhotos[i]);
-                            }
+                            <td style="vertical-align:middle">
+                                <img src="~/Images/Products/@photo.Photo" alt="" style="width:100px" />
+                            </td>
+                            <td style="vertical-align:middle;">
+                                @photo.Description
+                            </td>
+                            <td style="vertical-align:middle;">@photo.DisplayOrder</td>
+                            <td style="vertical-align:middle;">@(photo.IsHidden ? "X" : "")</td>
+                            <td style="vertical-align:middle; text-align:right">
+                                <a class="btn btn-xs btn-primary" href="~/Product/Photo/@photo.ProductID?method=edit&photoId=@photo.PhotoID">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a class="btn btn-xs btn-danger" href="~/Product/Photo/@photo.ProductID?method=delete&photoId=@photo.PhotoID" onclick="return confirm('Xóa ảnh của mặt hàng hay không?')">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -200,12 +213,20 @@
                     @{
                         List<ProductAttribute> listAttributes = SV21T1020228.BusinessLayers.ProductDataService.ListAttributes(Model.ProductID);
                     }
-                    @for (int i = 0; i < listAttributes.Count; i++)
+                    @foreach (var photoAttribute in listAttributes)
                     {
                         <tr>
-                            @{
-                                await Html.RenderPartialAsync("EditAttribute", listAttributes[i]);
-                            }
+                            <td style="vertical-align:middle">@photoAttribute.AttributeName</td>
+                            <td style="vertical-align:middle;">@photoAttribute.AttributeValue</td>
+                            <td style="vertical-align:middle;">@photoAttribute.DisplayOrder</td>
+                            <td style="vertical-align:middle; text-align:right">
+                                <a class="btn btn-xs btn-primary" href="~/Product/Attribute/@photoAttribute.ProductID?method=edit&attributeId=@photoAttribute.AttributeID">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a class="btn btn-xs btn-danger" href="~/Product/Attribute/@photoAttribute.ProductID?method=delete&attributeId=@photoAttribute.AttributeID" onclick="return confirm('Xóa thuộc tính này của mặt hàng?')">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
                         </tr>
                     }
                 </tbody>

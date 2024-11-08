@@ -127,18 +127,26 @@ namespace SV21T1020228.Web.Controllers
         {
             ViewBag.Title = (data.PhotoID == 0 ? "Bổ sung" : "Thay đổi ảnh") + " cho mặt hàng";
 
-            // TODO: Xử lý displayOrder
+            if (data.DisplayOrder <= 0)
+            {
+                ModelState.AddModelError(nameof(data.DisplayOrder), "Thứ tự hiển thị không hợp lệ");
+            }
 
             // Xử lý với ảnh
             if (uploadPhoto == null)
             {
-                if (data.Photo == null)
+                if (string.IsNullOrWhiteSpace(data.Photo))
                 {
-                    ModelState.AddModelError(nameof(data.Photo), "Vui lòng thêm ảnh mặt hàng");
-                    return View("Photo", data);
+                    ModelState.AddModelError(nameof(data.Photo), "Vui lòng thêm ảnh mặt hàng");      
                 }
-            }       
-            else 
+            }
+            
+            if (!ModelState.IsValid)
+            {
+                return View("Photo", data);
+            } 
+
+            if (uploadPhoto != null)
             {
                 string fileName = $"{DateTime.Now.Ticks}--{uploadPhoto.FileName}";
                 string filePath = Path.Combine(ApplicationContext.WebRootPath, @"images\\products", fileName);
@@ -157,8 +165,7 @@ namespace SV21T1020228.Web.Controllers
                 ProductDataService.UpdatePhoto(data);
             }
 
-            var product = ProductDataService.GetProduct(data.ProductID);
-            return View("Edit", product);
+            return RedirectToAction("Edit", new {id = data.ProductID});
         }
 
         public IActionResult Attribute(int id = 0, string method = "", int attributeId = 0)
@@ -226,8 +233,7 @@ namespace SV21T1020228.Web.Controllers
                 }
             }
 
-            var product = ProductDataService.GetProduct(data.ProductID);
-            return View("Edit", product);
+            return RedirectToAction("Edit", new { id = data.ProductID });
         }
 
         [HttpPost]
