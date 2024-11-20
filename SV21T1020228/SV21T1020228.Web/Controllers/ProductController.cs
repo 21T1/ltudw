@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SV21T1020228.BusinessLayers;
-using SV21T1020228.DataLayers;
 using SV21T1020228.DomainModels;
 using SV21T1020228.Web.AppCodes;
 using SV21T1020228.Web.Models;
-using System;
 
 namespace SV21T1020228.Web.Controllers
 {
@@ -291,20 +288,11 @@ namespace SV21T1020228.Web.Controllers
             if (data.ProductID == 0)
             {
                 int id = ProductDataService.AddProduct(data);
-                if (id < 0)
-                {
-                    ModelState.AddModelError(nameof(data.ProductName), "Tên mặt hàng đã được sử dụng");
-                    return View("Edit", data);
-                }
+                return RedirectToAction("Edit", new { id = id });
             }
             else
             {
-                bool result = ProductDataService.UpdateProduct(data);
-                if (!result)
-                {
-                    ModelState.AddModelError(nameof(data.ProductName), "Tên mặt hàng đã được sử dụng");
-                    return View("Edit", data);
-                }
+               ProductDataService.UpdateProduct(data);
             }
 
             return RedirectToAction("Index");

@@ -137,6 +137,18 @@ namespace SV21T1020228.DataLayers.SQL_Server
             return data;
         }
 
+        public List<Customer> List()
+        {
+            List<Customer> data = new List<Customer>();
+            using (var connection = OpenConnection())
+            {
+                var sql = @"select * from Customers";
+                data = connection.Query<Customer>(sql: sql, commandType: CommandType.Text).ToList();
+                connection.Close();
+            }
+            return data;
+        }
+
         public bool Update(Customer data)
         {
             bool result = false;

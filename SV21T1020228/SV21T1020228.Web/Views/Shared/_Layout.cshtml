@@ -83,6 +83,7 @@
     <script src="~/themes/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
     <script src="~/themes/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
     <script src="~/themes/bower_components//select2/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.9/jquery.inputmask.min.js"></script>
     <!-- AdminLTE App -->
     <script src="~/themes/dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
@@ -100,6 +101,14 @@
                 }
             });
             $('.select2').select2();
+            $('.number-separator').inputmask({
+                alias: "numeric",
+                groupSeparator: ".",       // Dấu chấm phân cách phần nghìn
+                autoGroup: true,           // Tự động thêm dấu phân cách
+                digits: 0,                 // Không có chữ số thập phân                
+                removeMaskOnSubmit: true,   // Loại bỏ ký tự phân cách phần nghìn khi submit form
+                rightAlign: false
+            });
         })
     </script>
     @RenderSection("scripts", false)

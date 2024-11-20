@@ -1,7 +1,6 @@
 ﻿using SV21T1020228.DataLayers;
 using SV21T1020228.DataLayers.SQL_Server;
 using SV21T1020228.DomainModels;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SV21T1020228.BusinessLayers
 {

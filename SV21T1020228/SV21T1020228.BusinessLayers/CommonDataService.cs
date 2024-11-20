@@ -61,6 +61,11 @@ namespace SV21T1020228.BusinessLayers
             return customerDB.List(page, pageSize, searchValue);
         }
 
+        public static List<Customer> ListOfCustomers()
+        {
+            return customerDB.List();
+        }
+
         /// <summary>
         /// Lấy thông tin khách hàng có mã là id
         /// </summary>

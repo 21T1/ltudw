@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-sm-3">
                     <label>Loại hàng:</label>
-                    <select class="form-control select2" name="CategoryID">
+                    <select class="form-control select2" name="@nameof(Model.CategoryID)">
                         <option value="">-- Chọn loại hàng --</option>
                         @foreach (var item in SV21T1020228.BusinessLayers.CommonDataService.ListOfCategories())
                         {

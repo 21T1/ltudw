@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using SV21T1020228.DomainModels;
-using System;
 using System.Data;
 
 namespace SV21T1020228.DataLayers.SQL_Server
@@ -10,20 +9,15 @@ namespace SV21T1020228.DataLayers.SQL_Server
         public ProductDAL(string connectionString) : base(connectionString)
         {
         }
-        // TODO: Bổ sung các chức năng xử lý + thư viện ảnh
+
         public int Add(Product data)
         {
             int id = 0;
             using (var connnection = OpenConnection())
             {
-                var sql = @"if exists (select * from Products where ProductName = @ProductName)
-                                select -1;
-                            else
-                                begin
-                                    insert into Products(ProductName, ProductDescription, SupplierID, CategoryID, Unit, Price, Photo, IsSelling)
-                                    values (@ProductName, @ProductDescription, @SupplierID, @CategoryID, @Unit, @Price,	@Photo, @IsSelling)
-                                    select scope_identity()
-                                end";
+                var sql = @"insert into Products(ProductName, ProductDescription, SupplierID, CategoryID, Unit, Price, Photo, IsSelling)
+                            values (@ProductName, @ProductDescription, @SupplierID, @CategoryID, @Unit, @Price,	@Photo, @IsSelling)
+                            select scope_identity()";
                 var parameters = new
                 {
                     ProductName = data.ProductName,
@@ -129,7 +123,6 @@ namespace SV21T1020228.DataLayers.SQL_Server
                     productID
                 };
                 result = connection.Execute(sql: sql, param: parameters, commandType: CommandType.Text) > 0;
-
                 connection.Close();
             }
             return result;
@@ -312,18 +305,15 @@ namespace SV21T1020228.DataLayers.SQL_Server
             bool result = false;
             using (var connnection = OpenConnection())
             {
-                var sql = @"if not exists (select * from Products where ProductID <> @ProductID and ProductName = @ProductName)
-                            begin
-                                update Products
-                                set ProductName = @ProductName,
-                                    ProductDescription = @ProductDescription,
-                                    CategoryID = @CategoryID,
-                                    SupplierID = @SupplierID,
-                                    Price = @Price,
-                                    Photo = @Photo,
-                                    IsSelling = @IsSelling
-                                where ProductID = @ProductID
-                            end;";
+                var sql = @"update Products
+                            set ProductName = @ProductName,
+                                ProductDescription = @ProductDescription,
+                                CategoryID = @CategoryID,
+                                SupplierID = @SupplierID,
+                                Price = @Price,
+                                Photo = @Photo,
+                                IsSelling = @IsSelling
+                            where ProductID = @ProductID";
                 var parameters = new
                 {
                     ProductID = data.ProductID,
