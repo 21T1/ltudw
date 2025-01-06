@@ -4,24 +4,37 @@ namespace SV21T1020228.DataLayers
 {
     public interface IOrderDAL
     {
-        /// <summary>
-        /// Tìm kiếm và lấy danh sách đơn hàng dưới dạng phân trang
-        /// </summary>
-        IList<Order> List(int page = 1, int pageSize = 0,
-        int status = 0, DateTime? fromTime = null, DateTime? toTime = null,
+		/// <summary>
+		/// Tìm kiếm và lấy danh sách đơn hàng dưới dạng phân trang theo SearchValue
+		/// </summary>
+		IList<Order> List(int page = 1, int pageSize = 0,
+            int status = 0, DateTime? fromTime = null, DateTime? toTime = null,
+            string searchValue = "");
 
-        string searchValue = "");
+		/// <summary>
+		/// Tìm kiếm và lấy danh sách đơn hàng dưới dạng phân trang theo CustomerID
+		/// </summary>
+		public IList<Order> List(int page = 1, int pageSize = 0, 
+            int status = 0, DateTime? fromTime = null, DateTime? toTime = null, 
+            int customerID = 0);
 
-        /// <summary>
-        /// Đếm số lượng đơn hàng thỏa điều kiện tìm kiếm
-        /// </summary>
-        int Count(int status = 0, DateTime? fromTime = null, DateTime? toTime = null,
-        string searchValue = "");
-        /// <summary>
 
-        /// Lấy thông tin đơn hàng theo mã đơn hàng
-        /// </summary>
-        Order? Get(int orderID);
+		/// <summary>
+		/// Đếm số lượng đơn hàng thỏa điều kiện tìm kiếm theo SearchValue
+		/// </summary>
+		int Count(int status = 0, DateTime? fromTime = null, DateTime? toTime = null,
+            string searchValue = "");
+
+		/// <summary>
+		/// Đếm số lượng đơn hàng thỏa điều kiện tìm kiếm theo CustomerID
+		/// </summary>
+		int Count(int status = 0, DateTime? fromTime = null, DateTime? toTime = null,
+			int customerID = 0);
+
+		/// <summary>
+		/// Lấy thông tin đơn hàng theo mã đơn hàng
+		/// </summary>
+		Order? Get(int orderID);
         /// <summary>
         /// Bổ sung đơn hàng mới
         /// </summary>

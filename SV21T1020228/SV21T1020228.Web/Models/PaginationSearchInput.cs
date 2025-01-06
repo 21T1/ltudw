@@ -13,9 +13,9 @@
         /// Số dòng hiển thị trên mỗi trang
         /// </summary>
         public int PageSize { get; set; }
-        /// <summary>
-        /// Chuỗi giá trị cần tìm kiếm
-        /// </summary>
-        public String SearchValue { get; set; } = "";
-    }
+		/// <summary>
+		/// Chuỗi giá trị cần tìm kiếm
+		/// </summary>
+		public String SearchValue { get; set; } = "";
+	}
 }

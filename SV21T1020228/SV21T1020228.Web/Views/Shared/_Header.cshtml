@@ -2,7 +2,7 @@
     <!-- Logo -->
     <a href="~/themes/index2.html" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini"><b>Ducky</b></span>
+        <span class="logo-mini"><b>DDD</b></span>
         <!-- logo for regular state and mobile devices -->
         <span class="logo-lg"><b>Ducky</b></span>
     </a>
@@ -18,31 +18,36 @@
 
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-                <!-- User Account: style can be found in dropdown.less -->
-                <li class="dropdown user user-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="~/images/users/SV21T1020228.jpg" class="user-image" alt="User Image">
-                        <span class="hidden-xs">Ducky</span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <!-- User image -->
-                        <li class="user-header">
-                            <img src="~/images/users/SV21T1020228.jpg" class="img-circle" alt="User Image">
-                            <p>
-                                Ducky
-                            </p>
-                        </li>                      
-                        <!-- Menu Footer-->
-                        <li class="user-footer">
-                            <div class="pull-left">
-                                <a href="~/Account/ChangePassword" class="btn btn-default btn-flat">Đổi mật khẩu</a>
-                            </div>
-                            <div class="pull-right">
-                                <a href="~/Account/Logout" class="btn btn-default btn-flat">Thoát</a>
-                            </div>
+                @{
+                    var userData = User.GetUserData();
+                    if (userData != null)
+                    {
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="~/images/users/@userData.Photo" class="user-image" alt="User Image">
+                                <span class="hidden-xs">@userData.DisplayName</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header">
+                                    <img src="~/images/employees/@userData.Photo" class="img-circle" alt="User Image">
+                                    <p>
+                                        @userData.DisplayName
+                                    </p>
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="~/Account/ChangePassword" class="btn btn-default btn-flat">Đổi mật khẩu</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="~/Account/Logout" class="btn btn-default btn-flat">Thoát</a>
+                                    </div>
+                                </li>
+                            </ul>
                         </li>
-                    </ul>
-                </li>
+                    }
+                }
             </ul>
         </div>
     </nav>

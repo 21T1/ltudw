@@ -1,0 +1,71 @@
+﻿@model ProductSearchResult
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Product grid -->
+        @if (Model.RowCount == 0)
+        {
+            <div class="row d-flex flex-column justify-content-center align-items-center">
+                    <img src="~/images/noResult.jpg" style="width: auto; height: 200px;" />
+                    <p align="center" style="color: gray;">Không tìm thấy kết quả phù hợp <i class="fa-solid fa-face-sad-tear"></i></p>
+            </div>
+        }
+        else
+        {
+            <p>Tìm thấy <b>@Model.RowCount</b> kết quả trong tổng số <b>@Model.PageCount</b> trang. Bạn đang ở trang: <b>@Model.Page</b>.</p>
+            <div class="product-grid row">
+                @foreach (var item in Model.Data)
+                {
+                    <div class="col">
+                        <div class="product-item">
+                            <form action="~/Cart/Add/@item.ProductID" method="post">
+                                <figure>
+                                    <a href="~/Product/Detail/@item.ProductID" title="Product Title">
+                                        <img src="@WebConfig.IMAGE_SOURCE_HOST/images/products/@(string.IsNullOrWhiteSpace(item.Photo) ? "noProductAvailable.png" : @item.Photo)" alt="Product Thumbnail" class="tab-image overflow-hidden">
+                                    </a>
+                                </figure>
+                                <div class="d-flex flex-column">
+                                    <input type="hidden" name="@nameof(item.ProductID)" value="@item.ProductID" />
+                                    <h3 class="fs-6 fw-normal text-wrap" style="height: 40px; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;">@item.ProductName</h3>
+                                    <div class="d-flex justify-content-center align-items-center gap-2">
+                                        <span class="text-dark fw-semibold">@item.Price.ToString("#,0", new System.Globalization.CultureInfo("vi-VI")) VND</span>
+                                    </div>
+                                    <div class="button-area p-3 pt-0">
+                                        <div class="row g-1 mt-2">
+                                            <div class="col">
+                                                <button type="submit" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart">
+                                                    <svg width="18" height="18"><use xlink:href="#cart"></use></svg>
+                                                    Thêm vào Giỏ hàng
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+<div class="row pt-5">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center flex-wrap">
+            @for (int p = 1; p <= Model.PageCount; p++)
+            {
+                if (p == Model.Page)
+                {
+                    <li class="active page-item"><a class="page-link" href="#">@p</a></li>
+                }
+                else
+                {
+                    <li class="page-item"><a class="page-link" href="javascript:;" onclick="doSearch(@p)">@p</a></li>
+                }
+            }
+        </ul>
+    </nav>
+</div>

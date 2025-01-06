@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SV21T1020228.BusinessLayers;
 using SV21T1020228.DomainModels;
 using SV21T1020228.Web.AppCodes;
@@ -7,6 +8,7 @@ using System.Globalization;
 
 namespace SV21T1020228.Web.Controllers
 {
+    [Authorize(Roles = $"{WebUserRoles.SALE}")]
     public class OrderController : Controller
     {
         public const int PAGE_SIZE = 20;
@@ -77,12 +79,12 @@ namespace SV21T1020228.Web.Controllers
 
         public IActionResult EditDetail(int id = 0, int productId = 0)
         {
-            return View();
-        }
-
-        public IActionResult Shipping(int id = 0)
-        {
-            return View();
+            var detail = OrderDataService.GetOrderDetail(id, productId);
+            if (detail == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(detail);
         }
 
         public IActionResult Create()
@@ -109,7 +111,7 @@ namespace SV21T1020228.Web.Controllers
             {
                 Page = condition.Page,
                 PageSize = condition.PageSize,
-                SearchValue = condition.SearchValue,
+                SearchValue = condition.SearchValue ?? "",
                 RowCount = rowCount,
                 Data = data
             };
@@ -117,19 +119,19 @@ namespace SV21T1020228.Web.Controllers
             return View(model);
         }
 
-        private List<CartItem> GetShoppingCart()
+        private List<Models.CartItem> GetShoppingCart()
         {
-            var shoppingCart = ApplicationContext.GetSessionData<List<CartItem>>(SHOPPING_CART);
+            var shoppingCart = ApplicationContext.GetSessionData<List<Models.CartItem>>(SHOPPING_CART);
             if (shoppingCart == null)
             {
-                shoppingCart = new List<CartItem>();
+                shoppingCart = new List<Models.CartItem>();
                 ApplicationContext.SetSessionData(SHOPPING_CART, shoppingCart);
             }
 
             return shoppingCart;
         }
 
-        public IActionResult AddToCart(CartItem item)
+        public IActionResult AddToCart(Models.CartItem item)
         {
             if (item.SalePrice < 0 || item.Quantity <= 0)
             {
@@ -193,7 +195,7 @@ namespace SV21T1020228.Web.Controllers
                 return Json("Vui lòng nhập đầy đủ thông tin khách hàng và nơi giao hàng");
             }
 
-            int employeeID = 1; // TODO: Thay bởi ID của nhân viên đang login hệ thống
+            int employeeID = int.Parse(User.GetUserData().UserId); // TODO: Thay bởi ID của nhân viên đang login hệ thống
 
             List<OrderDetail> orderDetails = new List<OrderDetail>();
             foreach (var item in shoppingCart)
@@ -209,6 +211,63 @@ namespace SV21T1020228.Web.Controllers
             int orderID = OrderDataService.InitOrder(employeeID, customerID, deliveryProvince, deliveryAddress, orderDetails);
             ClearCart();
             return Json(orderID);
+        }
+
+        public IActionResult Cancel(int id = 0)
+        {
+            var result = OrderDataService.CancelOrder(id);
+            if (result)
+            {
+                return View("Details", id);
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Reject(int id = 0)
+        {
+            var result = OrderDataService.RejectOrder(id);
+            if (result)
+            {
+                return View("Details", id);
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Accept(int id = 0)
+        {
+            var result = OrderDataService.AcceptOrder(id);
+            if (result)
+            {
+                return View("Details", id);
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Shipping(int id = 0)
+        {
+            return View(id);
+        }
+
+        public IActionResult Finish(int id = 0)
+        {
+            var result = OrderDataService.FinishOrder(id);
+            if (result)
+            {
+                return View("Details", id);
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Delete(int id = 0)
+        {
+            var result = OrderDataService.DeleteOrder(id);
+            if (result)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var data = OrderDataService.GetOrder(id);
+            return View("Details", data);
         }
     }
 }

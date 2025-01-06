@@ -1,0 +1,117 @@
+﻿@model Customer
+@{
+    ViewBag.Title = "Thông tin cá nhân";
+}
+<div id="userAccount" class="container-fluid px-2 pb-5">
+	<div class="row d-flex justify-content-center">
+		<div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12 nav flex-column nav-pills me-3" >
+			<a href="~/Account/Index" class="btn nav-link active">Hồ sơ</a>
+			<a href="~/Account/ChangePassword" class="btn nav-link">Đổi mật khẩu</a>
+		</div>
+		<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12 rounded" style="box-shadow: 0px 2px 4px rgba(0, 0, 0, .1), 0px 8px 16px rgba(0, 0, 0, .1);">
+			<div class="card h-100" >
+				<div class="container py-2">
+					<div class="d-flex justify-content-between">
+						<h5 class="text-primary">Hồ sơ của tôi</h5>
+						@if (TempData["Message"] != null)
+						{
+							<span class="text-primary">@TempData["Message"]</span>
+						}
+						else
+						{
+							<span>@Html.ValidationMessage("Error")</span>
+						}
+					</div>
+					<hr class="mt-0">
+					<div class="row">
+						<form action="~/Account/Save" class="form-horizontal" method="post">
+							<input type="hidden" name="@nameof(Model.CustomerID)" value="@Model.CustomerID">
+							<div class="form-group d-flex">
+								<label class="col-lg-3 control-label">Họ và tên:</label>
+								<div class="col-lg-9">
+									<input class="form-control" id="name" type="text" name="@nameof(Model.CustomerName)" value="@Model.CustomerName" required>
+								</div>
+							</div>
+							<div class="form-group d-flex pt-2">
+								<label class="col-lg-3 control-label">Email:</label>
+								<div class="col-lg-9">
+									<input class="form-control" id="email" type="text" name="@nameof(Model.Email)" value="@Model.Email" required>
+								</div>
+							</div>
+							<div class="form-group d-flex pt-2">
+								<label class="col-lg-3 control-label">Số điện thoại:</label>
+								<div class="col-lg-9">
+									<input class="form-control" id="phone" type="text" name="@nameof(Model.Phone)" value="@Model.Phone" required>
+								</div>
+							</div>
+							<div class="form-group d-flex pt-2">
+								<label class="col-lg-3 control-label">Tỉnh thành:</label>
+								<div class="col-lg-9">
+									<div class="ui-select">
+										<select id="province" class="form-control select2" name="@nameof(Model.Province)" required>
+											<option value="">-- Chọn tỉnh thành --</option>
+											@foreach (var item in SV21T1020228.BusinessLayers.CommonDataService.ListOfProvinces())
+											{
+												if (item.ProvinceName == Model.Province)
+												{
+													<option value="@item.ProvinceName" selected>@item.ProvinceName</option>
+												}
+												else
+												{
+													<option value="@item.ProvinceName">@item.ProvinceName</option>
+												}
+											}
+										</select>
+										@Html.ValidationMessage(nameof(Model.Province))
+									</div>
+								</div>
+							</div>
+							<div class="form-group d-flex pt-2">
+								<label class="col-lg-3 control-label">Địa chỉ:</label>
+								<div class="col-lg-9">
+									<input id="address" class="form-control select2" name="@nameof(Model.Address)" value="@Model.Address" required />
+								</div>
+							</div>
+							<div class="form-group d-flex justify-content-end pt-2">
+								<input type="submit" id="btnSubmit" class="btn btn-primary" value="Lưu" disabled>  
+							</</div>
+						</form>
+					</div>
+				</div>		
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	html {
+		overflow-x: hidden;
+	}
+</style>
+
+@section scripts {
+	<script>
+		$(document).ready(function () {
+			var currentValue = {
+				CustomerName: $("#name").val(),
+				Email: $("#email").val(),
+				Phone: $("#phone").val(),
+					Province: $("#province").val(),
+				Address: $("#address").val()
+			};
+
+			$("input, select").on("input change", function() {
+            var isChanged = (
+                $("#name").val() !== currentValue.CustomerName 
+				|| $("#email").val() !== currentValue.Email
+                || $("#phone").val() !== currentValue.Phone
+                || $("#province").val() !== currentValue.Province
+                || $("#address").val() !== currentValue.Address
+            );
+
+            // Kích hoạt hoặc vô hiệu hóa nút "Lưu"
+            $("#btnSubmit").prop("disabled", !isChanged);
+        });
+		});
+	</script>
+}

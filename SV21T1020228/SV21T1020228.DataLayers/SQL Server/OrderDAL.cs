@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using SV21T1020228.DomainModels;
-using System.Buffers;
 using System.Data;
 
 namespace SV21T1020228.DataLayers.SQL_Server
@@ -25,7 +24,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
                     DeliveryProvince = data.DeliveryProvince,
                     DeliveryAddress = data.DeliveryAddress,
                     EmployeeID = data.EmployeeID,
-                    Status = 1
+                    Status = Constants.ORDER_INIT
                 };
                 id = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: CommandType.Text);
                 connection.Close();
@@ -68,7 +67,35 @@ namespace SV21T1020228.DataLayers.SQL_Server
             return count;
         }
 
-        public bool Delete(int orderID)
+		public int Count(int status = 0, DateTime? fromTime = null, DateTime? toTime = null, int customerID = 0)
+		{
+			int count = 0;
+			using (var connection = OpenConnection())
+			{
+				var sql = @"select count(*)
+                            from Orders as o
+                            left join Customers as c on o.CustomerID = c.CustomerID
+                            left join Employees as e on o.EmployeeID = e.EmployeeID
+                            left join Shippers as s on o.ShipperID = s.ShipperID
+
+                            where (@Status = 0 or o.Status = @Status)
+                            and (@FromTime is null or o.OrderTime >= @FromTime)
+                            and (@ToTime is null or o.OrderTime <= @ToTime)
+                            and c.CustomerID = @CustomerID";
+				var parameters = new
+				{
+					status,
+					fromTime,
+					toTime,
+					customerID
+				};
+
+				count = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: CommandType.Text);
+			}
+			return count;
+		}
+
+		public bool Delete(int orderID)
         {
             bool result = false;
             using (var connection = OpenConnection())
@@ -201,7 +228,51 @@ namespace SV21T1020228.DataLayers.SQL_Server
             return list;
         }
 
-        public IList<OrderDetail> ListDetails(int orderID)
+		public IList<Order> List(int page = 1, int pageSize = 0, int status = 0, DateTime? fromTime = null, DateTime? toTime = null, int customerID = 0)
+		{
+			List<Order> list = new List<Order>();
+			using (var connection = OpenConnection())
+			{
+				var sql = @"with cte as
+                            (
+                                select row_number() over(order by o.OrderTime desc) as RowNumber,
+                                    o.*,
+                                    c.CustomerName,
+                                    c.ContactName as CustomerContactName,
+                                    c.Address as CustomerAddress,
+                                    c.Phone as CustomerPhone,
+                                    c.Email as CustomerEmail,
+                                    e.FullName as EmployeeName,
+                                    s.ShipperName,
+                                    s.Phone as ShipperPhone
+                                from Orders as o
+                                    left join Customers as c on o.CustomerID = c.CustomerID
+                                    left join Employees as e on o.EmployeeID = e.EmployeeID
+                                    left join Shippers as s on o.ShipperID = s.ShipperID
+                                where (@Status = 0 or o.Status = @Status)
+                                    and (@FromTime is null or o.OrderTime >= @FromTime)
+                                    and (@ToTime is null or o.OrderTime <= @ToTime)
+                                    and c.CustomerID = @CustomerID
+                            )
+                            select * from cte
+                            where (@PageSize = 0)
+                                or (RowNumber between (@Page - 1) * @PageSize + 1 and @Page * @PageSize)
+                            order by RowNumber";
+				var parameters = new
+				{
+					status,
+					fromTime,
+					toTime,
+					customerID,
+					pageSize,
+					page
+				};
+				list = connection.Query<Order>(sql: sql, param: parameters, commandType: CommandType.Text).ToList();
+			}
+			return list;
+		}
+
+		public IList<OrderDetail> ListDetails(int orderID)
         {
             List<OrderDetail> list = new List<OrderDetail>();
             using (var connection = OpenConnection())

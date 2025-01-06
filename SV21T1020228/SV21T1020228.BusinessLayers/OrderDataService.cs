@@ -15,19 +15,32 @@ namespace SV21T1020228.BusinessLayers
         {
             orderDB = new OrderDAL(Configuration.ConnectionString);
         }
+
         /// <summary>
-        /// Tìm kiếm và lấy danh sách đơn hàng dưới dạng phân trang
+        /// Tìm kiếm và lấy danh sách đơn hàng dưới dạng phân trang theo SearchValue
         /// </summary>
         public static List<Order> ListOrders(out int rowCount, int page = 1, int pageSize = 0,
-        int status = 0, DateTime? fromTime = null, DateTime? toTime = null, string searchValue = "")
+            int status = 0, DateTime? fromTime = null, DateTime? toTime = null, 
+            string searchValue = "")
         {
             rowCount = orderDB.Count(status, fromTime, toTime, searchValue);
             return orderDB.List(page, pageSize, status, fromTime, toTime, searchValue).ToList();
         }
-        /// <summary>
-        /// Lấy thông tin của 1 đơn hàng
-        /// </summary>
-        public static Order? GetOrder(int orderID)
+
+		/// <summary>
+		/// Tìm kiếm và lấy danh sách đơn hàng dưới dạng phân trang theo CustomerID
+		/// </summary>
+		public static List<Order> ListOrders(out int rowCount, int page = 1, int pageSize = 0,
+		    int status = 0, DateTime? fromTime = null, DateTime? toTime = null, 
+            int customerID = 0)
+		{
+			rowCount = orderDB.Count(status, fromTime, toTime, customerID);
+			return orderDB.List(page, pageSize, status, fromTime, toTime, customerID).ToList();
+		}
+		/// <summary>
+		/// Lấy thông tin của 1 đơn hàng
+		/// </summary>
+		public static Order? GetOrder(int orderID)
         {
             return orderDB.Get(orderID);
         }
@@ -172,7 +185,6 @@ namespace SV21T1020228.BusinessLayers
         }
         /// <summary>
         /// Lưu thông tin chi tiết của đơn hàng (thêm mặt hàng được bán trong đơn hàng)
-        /// theo nguyên tắc:
         /// - Nếu mặt hàng chưa có trong chi tiết đơn hàng thì bổ sung
         /// - Nếu mặt hàng đã có trong chi tiết đơn hàng thì cập nhật lại số lượng và giá bán
         /// </summary>

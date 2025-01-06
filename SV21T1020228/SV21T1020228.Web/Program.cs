@@ -13,10 +13,10 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
     {
-        option.Cookie.Name = "AuthenticationCookie";
-        option.LoginPath = "/Account/Login";
-        option.AccessDeniedPath = "/Account/AccessDenined";
-        option.ExpireTimeSpan = TimeSpan.FromDays(360);
+        option.Cookie.Name = "AuthenticationCookie";        // Tên
+        option.LoginPath = "/Account/Login";                // Đường dẫn
+        option.AccessDeniedPath = "/Account/AccessDenined"; // URL trong trường hợp bị cấm truy cập
+        option.ExpireTimeSpan = TimeSpan.FromDays(360);     // Thời gian tồn tại của Cookie
     });
 builder.Services.AddSession(option =>
 {
@@ -25,16 +25,13 @@ builder.Services.AddSession(option =>
     option.Cookie.IsEssential = true;
 });
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseStaticFiles();
-
 app.UseRouting();
 
-app.UseAuthentication();
-
+app.UseAuthentication();    // Trước Author
 app.UseAuthorization();
 
 app.UseSession();

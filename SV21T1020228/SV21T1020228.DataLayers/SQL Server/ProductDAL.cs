@@ -263,6 +263,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
                     page
                 };
                 data = connection.Query<Product>(sql: sql, param: parameters, commandType: CommandType.Text).ToList();
+                connection.Close();
             }
 
             return data;

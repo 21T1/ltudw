@@ -1,0 +1,94 @@
+﻿@model Product
+@{
+    ViewBag.Title = Model.ProductName;
+}
+
+<input type="hidden" id="message" value="@ViewBag.Message" />
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="row px-1 py-3 rounded rounded-2" style="box-shadow: 0px 2px 4px rgba(0, 0, 0, .1), 0px 8px 16px rgba(0, 0, 0, .1)">
+                <div class="col-md-4">
+                    <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active" style="text-align: center;">
+                                <img style="max-height: 400px;" src="@WebConfig.IMAGE_SOURCE_HOST/images/products/@(string.IsNullOrWhiteSpace(Model.Photo) ? "noProductAvailable.png" : Model.Photo)" class="img-fluid rounded" alt="...">
+                            </div>
+                            @foreach (var item in SV21T1020228.BusinessLayers.ProductDataService.ListOfProducts())
+                            {
+                                <div class="carousel-item" style="text-align: center;">
+                                    <img style="max-height: 400px;" src="@WebConfig.IMAGE_SOURCE_HOST/images/products/@(string.IsNullOrWhiteSpace(Model.Photo) ? "noProductAvailable.png" : Model.Photo)" class="img-fluid rounded" alt="...">
+                                </div>
+                            }
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                            <span class="" aria-hidden="true">
+                                <i class="fa-solid fa-angle-left fs-3" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, .1), 0px 8px 16px rgba(0, 0, 0, .1)"></i>
+                            </span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                            <span class="" aria-hidden="true">
+                                <i class="fa-solid fa-angle-right fs-3" style="text-shadow: 0px 2px 4px rgba(0, 0, 0, .1), 0px 8px 16px rgba(0, 0, 0, .1)"></i>
+                            </span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <h5 class="card-title text-black fw-bold">@Model.ProductName</h5> <hr class="my-1" />
+                    <p class="card-text text-primary fw-bold">@Model.Price.ToString("#,0", new System.Globalization.CultureInfo("vi-VI")) VND</p>
+                    <p class="card-text">@Model.ProductDescription</p>
+                    <p class="card-text">Phân loại: @SV21T1020228.BusinessLayers.CommonDataService.GetCategory(@Model.CategoryID).CategoryName</p>
+                    <p class="card-text">Nhà cung cấp: @SV21T1020228.BusinessLayers.CommonDataService.GetSupplier(@Model.SupplierID).SupplierName</p>
+                    <form action="~/Cart/Add" class="form-horizontal" method="post">
+                        <input type="hidden" name="productID" value="@Model.ProductID">
+                        <div class="row form-group d-flex">
+                            <div class="col-sm-3">
+                                <input class="form-control text-center" type="number" min="1" name="quantity" value="1" placeholder="Số lượng" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <button type="submit" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart">
+                                    <svg width="18" height="18"><use xlink:href="#cart"></use></svg>
+                                    Thêm vào Giỏ hàng
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 ">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr class="bg-primary">
+                            <th>Thuộc tính</th>
+                            <th>Giá trị</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in SV21T1020228.BusinessLayers.ProductDataService.ListAttributes(Model.ProductID))
+                        {
+                            <tr>
+                                <td>@item.AttributeName</td>
+                                <td>@item.AttributeValue</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>    
+<style>
+    html {
+        overflow: hidden;
+    }
+    p {
+        padding-bottom: 0;
+        margin-bottom: 0;
+        color: black;
+    }
+</style>

@@ -1,0 +1,82 @@
+﻿@model OrderSearchInput
+@{
+	ViewBag.Title = "Đơn hàng";
+}
+
+<style>
+	html {
+		overflow-x: hidden;
+	}
+</style>
+@{
+	var userData = User.GetUserData();
+	if (userData != null)
+	{
+		<div id="purchaseNavbar" class="wrapper pt-2 px-5 pb-2">
+			<div class="row d-flex justify-content-center">
+				<form id="frmSearchInput" action="~/Order/Search" method="get" class="d-inline">
+					<input type="hidden" name="@nameof(Model.PageSize)" value="@Model.PageSize" />
+					<div class="row d-flex justify-content-end">
+						<div class="col-sm-2">
+							<input type="text" name="@nameof(Model.TimeRange)" value="@Model.TimeRange" class="form-control daterange-picker" placeholder="" />
+						</div>
+						<div class="col-3">
+							<select class="form-control" name="@nameof(Model.Status)">
+								<option value="0" align="center">-- Tất cả trạng thái --</option>
+								<option value="1">Đơn hàng mới (chờ duyệt)</option>
+								<option value="2">Đơn hàng đã duyệt (chờ chuyển hàng)</option>
+								<option value="3">Đơn hàng đang được giao</option>
+								<option value="4">Đơn hàng đã hoàn tất thành công</option>
+								<option value="-1">Đơn hàng bị hủy</option>
+								<option value="-2">Đơn hàng bị từ chối</option>
+							</select>
+						</div>
+						<div class="col-1 d-flex justify-content-end">
+							<button type="submit" class="btn btn-primary">Lọc <i class="fa-solid fa-filter"></i></button>
+						</div>
+					</div>
+				</form>
+				<div id="searchResult"></div>
+
+			</div>
+
+		</div>
+	}
+}
+
+@section scripts {
+	<script>
+		function doSearch(page) {
+		  var searchCondition = $("#frmSearchInput").serializeArray();
+		  searchCondition.push({
+			   name: "page",
+				value: page
+			});
+
+			var action = $("#frmSearchInput").prop("action");
+			var method = $("#frmSearchInput").prop("method");
+
+			$.ajax({
+				url: action,
+				type: method,
+				data: searchCondition,
+				success: function (data) {
+					$("#searchResult").html(data)
+				}
+			});
+		}
+
+		$(document).ready(function () {
+			$('.daterange-picker').daterangepicker({
+				locale: {
+					format: 'DD/MM/YYYY'
+				}
+			});
+			doSearch(@Model.Page);
+			$("#frmSearchInput").submit(function (e) {
+				e.preventDefault();
+				doSearch(1);
+			})
+		})
+	</script>
+}

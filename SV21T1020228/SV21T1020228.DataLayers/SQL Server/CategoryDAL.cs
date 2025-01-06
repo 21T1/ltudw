@@ -4,7 +4,7 @@ using System.Data;
 
 namespace SV21T1020228.DataLayers.SQL_Server
 {
-    public class CategoryDAL : BaseDAL, ICommonDAL<Category>, ISimpleQueryDAL<Category>
+    public class CategoryDAL : BaseDAL, ICommonDAL<Category>
     {
         public CategoryDAL(string connectionString) : base(connectionString)
         {
@@ -105,19 +105,6 @@ namespace SV21T1020228.DataLayers.SQL_Server
             return result;
         }
 
-        public List<Category> List(string searchValue = "")
-        {
-            List<Category> data = new List<Category>();
-            searchValue = $"%{searchValue}%";
-            using (var connection = OpenConnection())
-            {
-                var sql = @"select * from Categories where CategoryName like @CategoryName";
-                var parameters = new { CategoryName = searchValue };
-                data = connection.Query<Category>(sql: sql, param: parameters, commandType: CommandType.Text).ToList();
-            }
-            return data;
-        }
-
         public List<Category> List(int page = 1, int pageSize = 0, string searchValue = "")
         {
             List<Category> data = new List<Category>();
@@ -141,18 +128,6 @@ namespace SV21T1020228.DataLayers.SQL_Server
                     searchValue
                 };
                 data = connection.Query<Category>(sql: sql, param: parameters, commandType: CommandType.Text).ToList();
-            }
-            return data;
-        }
-
-        public List<Category> List()
-        {
-            List<Category> data = new List<Category>();
-            using (var connection = OpenConnection())
-            {
-                var sql = "select * from Categories";
-                data = connection.Query<Category>(sql: sql, commandType: System.Data.CommandType.Text).ToList();
-                connection.Close();
             }
             return data;
         }

@@ -47,6 +47,11 @@ namespace SV21T1020228.BusinessLayers
             return supplierDB.List();
         }
 
+        public static List<Shipper> ListOfShippers()
+        {
+            return shipperDB.List();
+        }
+
         /// <summary>
         /// Tìm kiếm và lấy danh sách khách hàng dưới dạng phân trang
         /// </summary>

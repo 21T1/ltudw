@@ -1,0 +1,207 @@
+﻿@model IEnumerable<CartItem>
+
+@{
+	ViewBag.Title = "Giỏ hàng";
+	int stt = 0;
+	decimal sum = 0m;
+}
+
+<style>
+	#card-wrapper td {
+		border: none;
+	}
+</style>
+
+
+<div id="card-wrapper">
+	<div class="cart-section mt-150 mb-150 pb-5">
+		<div class="wrapper px-5">
+			<div class="row">
+				<div class="col-lg-12 col-md-12">
+					<div class="cart-table-wrap">
+						<table class="cart-table">
+							<thead class="cart-table-head">
+								<tr class="table-head-row">
+									<th class="product-remove"></th>
+									<th class="product-image">Ảnh</th>
+									<th class="product-image">Mặt hàng</th>
+									<th class="product-price">Đơn giá</th>
+									<th class="product">Số lượng</th>
+									<th class="product-total">Thành tiền</th>
+									<th class="product-action">Thao tác</th>
+								</tr>
+							</thead>
+							<tbody>
+								<input type="hidden" id="userID" value="@User.GetUserData().UserId">
+								@if (Model.Count() > 0)
+								{
+									@foreach (var item in Model)
+									{
+										sum += item.Price;
+									<tr class="table-body-row">
+										<td>
+											@(++stt)
+										</td>
+										<td>
+											<img style="height: 50px; width: 50px; object-fit: cover;" src="@WebConfig.IMAGE_SOURCE_HOST/images/products/@(string.IsNullOrWhiteSpace(item.Photo) ? "noProductAvailable.png" : item.Photo)" alt="Product Thumbnail" class="tab-image overflow-hidden">
+										</td>
+										<td class="px-2" style="width: 350px;">
+											<span class="float-start" style="text-align: left; line-height: 20px;">@item.ProductName</span>
+										</td>
+										<td class="px-2">
+												@item.Price.ToString("#,0", new System.Globalization.CultureInfo("vi-VI")) VND
+										</td>
+										<td class="d-flex justify-content-center">
+											<input id="currentQuantity_@item.ProductID" type="hidden" value="@item.Quantity" />
+											<input id="quantity_@item.ProductID" type="number" min="1" class="form-control" style="width: 70px; text-align: center;" name="@nameof(item.Quantity)" value="@item.Quantity" />
+											<a id="btnUpdate_@item.ProductID"
+												data-url="/Cart/Update"
+												class="btn text-primary" style="visibility: hidden;">
+												<i class="fa-solid fa-check"></i>
+											</a>
+										</td>
+										<td class="px-2">@item.TotalPrice.ToString("#,0", new System.Globalization.CultureInfo("vi-VI")) VND</td>
+										<td class="text-right">
+											<a class="btn ajax-link" href="~/Cart/Remove/@item.ProductID"
+												data-name="@item.ProductName"
+												class="btn btn-xs">
+												<i class="fa-solid fa-xmark"></i>
+											</a>
+										</td>
+									</tr>
+									}
+								}
+								else
+								{
+								<tr>
+									<td colspan="7" class="text-center text-primary">
+										<p>Giỏ hàng trống</p>
+									</td>
+								</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12 fixed-bottom border-primary bg-white" style="box-shadow: 0px 2px 4px rgba(0, 0, 0, .1), 0px 8px 16px rgba(0, 0, 0, .1)">
+			<div class="py-3 px-3 d-flex justify-content-end">
+				<div>
+					<span class="me-3">
+						Tổng (@stt sản phẩm):
+						<span class="text-primary fw-bold"> @sum.ToString("#,0", new System.Globalization.CultureInfo("vi-VI")) VND</span>
+					</span>
+
+					@if (Model.Count() > 0)
+					{
+
+						<!-- Button trigger modal -->
+						<a href="~/Order/Init" class="btn btn-primary btn-modal" data-bs-toggle="modal" data-bs-target="#dialogModal">Đặt hàng</a>
+
+
+						<!-- Modal -->
+						<div id="dialogModal" class="modal" role="dialog">
+						</div>
+						
+					}
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+<style>
+	.modal-backdrop {
+		z-index: 0;
+	}
+</style>
+
+@section scripts {
+	<script>
+		$(document).ready(function () {
+			var data = @Html.Raw(Json.Serialize(Model))
+
+			data.forEach(function (item) {
+				const currentQuantity = document.getElementById('currentQuantity_' + item.productID);
+				const quantity = document.getElementById('quantity_' + item.productID);
+				const btnUpdate = document.getElementById('btnUpdate_' + item.productID);
+
+				quantity.addEventListener('change', function () {
+					if (quantity.value.trim() !== currentQuantity.value.trim()) {
+						btnUpdate.style.visibility = 'visible'; // Show the button
+					} else {
+						btnUpdate.style.visibility = 'hidden'; // Hide the button
+					}
+				});
+
+				$("#btnUpdate_" + item.productID).click(function (e) {
+					$.ajax({
+						url: $(this).data("url"),
+						type: "POST",
+						contentType: "application/json",
+						data: JSON.stringify({
+							cartID: parseInt($("#userID").val()),
+							productID: item.productID,
+							quantity: parseInt(quantity.value.trim())
+						}),
+						success: function (data) {
+							if (data === "") {
+								location.reload()
+							} else {
+								alert("Không thể cập nhật số lượng sản phẩm!");
+							}
+						}
+					})
+				})
+			});
+
+			$(".ajax-link").click(function (e) {
+				e.preventDefault();
+
+				var productName = $(this).data("name");
+				if (productName) {
+					var str = "Xác nhận xóa mặt hàng " + productName + " ra khỏi giỏ hàng?";
+					if (!confirm(str)) {
+						return false;
+					}
+
+					$.ajax({
+						url: $(this).prop("href"),
+						method: "GET",
+						success: function (data) {
+							if (data === "") {
+								location.reload();
+							} else {
+								alert("Không thể xóa sản phẩm!");
+							}
+						}
+					})
+				} 
+
+			})
+
+			$(".btn-modal").click(function (e) {
+				e.preventDefault();
+				var link = $(this).prop("href");
+				$.ajax({
+					url: link,
+					type: "GET",
+					error: function () {
+						alert("Your request is not valid!");
+					},
+					success: function (data) {
+						$("#dialogModal").empty();
+						$("#dialogModal").html(data);
+						$("#dialogModal").modal();
+					}
+				});
+			});
+		})
+	</script>
+}

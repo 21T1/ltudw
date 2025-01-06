@@ -69,6 +69,10 @@
              immediately after the control sidebar -->
         <div class="control-sidebar-bg"></div>
     </div>
+
+    <environment names="Development">
+        <script src="_framework/aspnetcore-browser-refresh.js"></script>
+    </environment>
     <!-- ./wrapper -->
     <!-- jQuery 3 -->
     <script src="~/themes/bower_components/jquery/dist/jquery.min.js"></script>
@@ -111,6 +115,8 @@
             });
         })
     </script>
-    @RenderSection("scripts", false)
+    
+    @await RenderSectionAsync("scripts", required: false)
+
 </body>
 </html>

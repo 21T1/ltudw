@@ -12,7 +12,7 @@ namespace SV21T1020228.BusinessLayers
             productDB = new ProductDAL(Configuration.ConnectionString);
         }
 
-        public static List<Product> ListOfProducts(string searchValue = "")
+        public static List<Product> ListOfProducts()
         {
             return productDB.List();
         }

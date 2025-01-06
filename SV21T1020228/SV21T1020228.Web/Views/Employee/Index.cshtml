@@ -28,58 +28,9 @@
         </form>
 
         <!-- Hiển thị dữ liệu -->
-        <p style="margin:10px 0 10px 0">
-            Có <strong>100</strong> đơn hàng trong tổng số <strong>10</strong> trang
-        </p>
+        <div id="searchResult"></div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped">
-                <thead>
-                    <tr class="bg-primary">
-                        <th>Khách hàng</th>
-                        <th>Ngày lập</th>
-                        <th>Nhân viên phụ trách</th>
-                        <th>Thời điểm duyệt</th>
-                        <th>Người giao hàng</th>
-                        <th>Ngày nhận giao hàng</th>
-                        <th>Thời điểm kết thúc</th>
-                        <th>Trạng thái</th>
-                        <th style="width:40px"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int i = 1; i <= 5; i++)
-                    {
-                        <tr>
-                            <td>Trần Quang Lợi</td>
-                            <td>01/10/2022 15:00</td>
-                            <td>Nguyễn Văn Minh</td>
-                            <td>01/10/2022 17:00</td>
-                            <td>Lê Văn Hải</td>
-                            <td>03/10/2022 11:30</td>
-                            <td>03/10/2022 11:45</td>
-                            <td>Finished</td>
-                            <td>
-                                <a href="~/Order/Details/123" class="btn btn-info btn-xs">
-                                    <i class="glyphicon glyphicon-th-list"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <div class="text-center">
-            <ul class="pagination">
-                <li class="active"><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-@* @section scripts {
+@section scripts {
     <script>
         function doSearch(page) {
             var searchCondition = $("#frmSearchInput").serializeArray();
@@ -109,4 +60,4 @@
             })
         })
     </script>
-} *@
+}

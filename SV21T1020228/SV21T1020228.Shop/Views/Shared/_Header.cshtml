@@ -1,0 +1,77 @@
+﻿@{
+    var userData = User.GetUserData();
+}
+<style>
+    .dropdown.user:hover .dropdown-menu {
+        display: block;
+        margin-top: 0; /* remove the gap so it doesn't close */
+    }
+</style>
+<header class="fixed-top bg-white">
+    <div class="container-fluid">
+        <div class="row py-3 border-bottom" style="">          
+            <!-- Logo -->
+            <div class="col-sm-4 col-lg-2 text-center text-sm-start d-flex gap-3 justify-content-center justify-content-md-start">
+                <div class="d-flex align-items-center my-3 my-sm-0">
+                    <a href="~/">
+                        <img src="~/images/logo.png" width="100" alt="logo" class="img-fluid">
+                    </a>
+                </div>
+            </div>
+            <div class="col d-flex align-items-center">
+                @{
+                    var lstTitle = new List<string>{"Đăng ký", "Đăng nhập", "Thông tin cá nhân", "Đổi mật khẩu", "Giỏ hàng"};
+                    if (lstTitle.Contains(ViewBag.Title))
+                    {
+                        <h4 class="fw-6 text-primary m-0">@ViewBag.Title</h4>
+                    }
+                }
+            </div>
+
+            <div class="col-sm-8 col-lg-2 d-flex gap-5 align-items-center justify-content-center justify-content-sm-end">
+                <ul class="d-flex justify-content-end list-unstyled m-0">
+                    <!-- Search -->
+                    <li>
+                        @if (ViewBag.Title != "Tìm kiếm sản phẩm")
+                        {
+                            <a href="~/Product/Index" class="p-2 mx-1">
+                                <svg width="24" height="24"><use xlink:href="#search"></use></svg>
+                            </a>
+                        }
+                    </li>
+                    <!-- Account -->
+                    <li class="dropdown user">
+                        <a href="#" class="p-2 mx-1" role="button" id="user" data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg width="24" height="24"><use xlink:href="#user"></use></svg>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end border-0 p-3 rounded-0 shadow" aria-labelledby="pages">
+                            @{
+                                if (userData != null)
+                                {
+                                    <li class="text-primary text-center"><b>@userData.DisplayName</b></li><hr class="my-1">
+                                    <li><a href="~/Account/Index" class="dropdown-item">Tài khoản của tôi</a></li>
+                                    <li><a href="~/Order/Index" class="dropdown-item">Đơn hàng</a></li>
+                                    <li><a href="~/Account/Logout" class="dropdown-item">Đăng xuất</a></li>
+                                }
+                                else
+                                {
+                                    <li><a href="~/Account/Login" class="dropdown-item">Đăng nhập </a></li>
+                                    <li><a href="~/Account/SignUp" class="dropdown-item">Đăng ký</a></li>
+                                }
+                            }
+                        </ul>
+                    </li>
+                    @if (userData != null)
+                    {
+                        <li>
+                            <a href="~/Cart" class="p-2 mx-1">
+                                <svg width="24" height="24"><use xlink:href="#shopping-bag"></use></svg>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>

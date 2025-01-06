@@ -13,7 +13,7 @@ namespace SV21T1020228.DataLayers.SQL_Server
         public int Add(Customer data)
         {
             int id = 0;
-            using (var connnection = OpenConnection())
+            using (var connection = OpenConnection())
             {
                 var sql = @"if exists (select * from Customers where Email = @Email)
                                 select -1;
@@ -33,8 +33,8 @@ namespace SV21T1020228.DataLayers.SQL_Server
                     Email = data.Email,
                     IsLocked = data.IsLocked,
                 };
-                id = connnection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: CommandType.Text);
-                connnection.Close();
+                id = connection.ExecuteScalar<int>(sql: sql, param: parameters, commandType: CommandType.Text);
+                connection.Close();
             }
             return id;
         }
@@ -62,7 +62,9 @@ namespace SV21T1020228.DataLayers.SQL_Server
             bool result = false;
             using (var connection = OpenConnection())
             {
-                var sql = @"delete from Customers 
+                var sql = @"delete from CartItems 
+                            where CartID = @CustomerID
+                            delete from Customers 
                             where CustomerID = @CustomerID";
                 var parameters = new
                 {
@@ -133,18 +135,6 @@ namespace SV21T1020228.DataLayers.SQL_Server
                     searchValue
                 };
                 data = connection.Query<Customer>(sql: sql, param: parameters, commandType: CommandType.Text).ToList();
-            }
-            return data;
-        }
-
-        public List<Customer> List()
-        {
-            List<Customer> data = new List<Customer>();
-            using (var connection = OpenConnection())
-            {
-                var sql = @"select * from Customers";
-                data = connection.Query<Customer>(sql: sql, commandType: CommandType.Text).ToList();
-                connection.Close();
             }
             return data;
         }
