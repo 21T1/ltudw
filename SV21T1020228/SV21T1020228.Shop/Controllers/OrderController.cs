@@ -36,7 +36,6 @@ namespace SV21T1020228.Shop.Controllers
 
         public IActionResult Search(OrderSearchInput condition)
         {
-            Console.Write(int.Parse(User.GetUserData().UserId));
             int rowCount;
             var data = OrderDataService.ListOrders(out rowCount, condition.Page, condition.PageSize, condition.Status, condition.FromTime, condition.ToTime, int.Parse(User.GetUserData().UserId));
             var model = new OrderSearchResult()
@@ -57,12 +56,19 @@ namespace SV21T1020228.Shop.Controllers
         public IActionResult Details(int id)
         {
 			var order = OrderDataService.GetOrder(id);
+            
 			if (order == null)
 			{
 				return RedirectToAction("Index");
 			}
 
-			var details = OrderDataService.ListOrderDetails(id);
+            int userID = int.Parse(User.GetUserData().UserId);
+            if (order.CustomerID != userID)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var details = OrderDataService.ListOrderDetails(id);
 			var model = new OrderDetailModel()
 			{
 				Order = order,
@@ -78,6 +84,7 @@ namespace SV21T1020228.Shop.Controllers
             return View();
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public IActionResult Init(string deliveryProvince = "", string deliveryAddress = "")
         {
@@ -92,7 +99,6 @@ namespace SV21T1020228.Shop.Controllers
 
             if (string.IsNullOrWhiteSpace(deliveryProvince) || string.IsNullOrWhiteSpace(deliveryAddress))
             {
-                //TODO: xử lý dữ liệu
                 return Json("Vui lòng nhập đầy đủ thông tin giao hàng");
             }
 
@@ -103,17 +109,18 @@ namespace SV21T1020228.Shop.Controllers
                 {
                     ProductID = item.ProductID,
                     Quantity = item.Quantity,
+                    SalePrice = item.Price,
+                    ProductName = item.ProductName,
+                    Photo = item.Photo,
                 });
             }
 
-            int orderID = OrderDataService.InitOrder(1,cartID, deliveryProvince, deliveryAddress, orderDetails);
+            int orderID = OrderDataService.InitOrder(1, cartID, deliveryProvince, deliveryAddress, orderDetails);
 
             if (orderID > 0)
             {
                 CartDataServices.DeleteCart(cartID);
-                return RedirectToAction("Details", new { id = orderID });
             }
-
             return Json(orderID);
         }
     }

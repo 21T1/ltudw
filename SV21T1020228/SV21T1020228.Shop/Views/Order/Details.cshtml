@@ -23,9 +23,10 @@
     <article class="card">
         <header class="card-header d-flex justify-content-between">
             <a href="Purchase" class="btn btn-outline-primary " data-abc="true"> <i class="fa fa-chevron-left"></i> Trở về</a>
+            <span><b>Order ID: @order.OrderID</b></span>
         </header>
         <div class="card-body p-4">
-            <h6>Order ID: OD45345345435</h6>
+            <h6>Chi tiết đơn hàng</h6>
             <article class="card">
                 <div class="card-body row">
                     <div class="col"> <strong>Thời gian đặt hàng:</strong> <br>@formatDate(order.OrderTime)</div>
@@ -34,19 +35,34 @@
                     <div class="col"> <strong>Trạng thái:</strong> <br>@order.StatusDescription</div>
                 </div>
                 <div class="card-body row">
-                    <div class="col"> <strong>Địa chỉ giao hàng:</strong> <br>@* @order.DeliveryAddress,  *@@order.DeliveryProvince</div>
-                    <div class="col"> <strong>Người giao hàng:</strong> <br>@order.ShipperName  | <br /> <i class="fa fa-phone"></i> @order.ShipperPhone</div>
+                    <div class="col"> <strong>Địa chỉ giao hàng:</strong> <br>@order.DeliveryAddress, @order.DeliveryProvince</div>
+                    @if (string.IsNullOrWhiteSpace(order.ShipperName))
+                    {
+                        <div class="col"> <strong>Người giao hàng:</strong> <br></div>
+                    }
+                    else
+                    {
+                        <div class="col"> <strong>Người giao hàng:</strong> <br>@order.ShipperName  | <br /> <i class="fa fa-phone"></i> @order.ShipperPhone</div>
+                    }
                     <div class="col"> <strong>Thời gian giao hàng:</strong> <br>@formatDate(order.ShippedTime)</div>
                     <div class="col"> <strong>Thời gian hoàn thành:</strong> <br>@formatDate(order.FinishedTime)</div>
                 </div>
             </article>
             <div class="track">
-                <div class="step active text-primary"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Xác nhận đặt hàng</span> </div>
-                <div class="step active text-primary"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">Đã duyệt</span> </div>
-                <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> Đang vận chuyển </span> </div>
-                <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">Hoàn thành</span> </div>
+                @if (order.Status > 0)
+                {
+                    <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Xác nhận đặt hàng</span> </div>
+                    <div class="step @(order.Status >= 2 ? "active" : "")"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">Đã duyệt</span> </div>
+                    <div class="step @(order.Status >= 3 ? "active" : "")"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> Đang vận chuyển </span> </div>
+                    <div class="step @(order.Status >= 4 ? "active" : "")"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">Hoàn thành</span> </div>
+                }
+                else
+                {
+                    <div class="step inactive"> <span class="icon"> <i class="fa fa-ban"></i> </span> <span class="text">@order.StatusDescription</span> </div>
+                }
             </div>
             <hr>
+            <h6>Danh sách mặt hàng</h6>
             <div class="cart-table-wrap">
                 <table class="cart-table">
                     <thead class="cart-table-head">
@@ -60,8 +76,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <input type="hidden" id="userID" value="@User.GetUserData().UserId">
-
                         @foreach (var item in lstDetails)
                         {
                             sum += item.SalePrice;
@@ -78,10 +92,7 @@
                                 <td class="px-2">
                                     @item.SalePrice.ToString("#,0", new System.Globalization.CultureInfo("vi-VI")) VND
                                 </td>
-                                <td>
-                                    @item.Quantity
-
-                                </td>
+                                <td>@item.Quantity</td>
                                 <td class="px-2">@item.TotalPrice.ToString("#,0", new System.Globalization.CultureInfo("vi-VI")) VND</td>
 
                             </tr>
@@ -98,153 +109,3 @@
         </div>
     </article>
 </div>
-
-<style>
-    #purchaseDetail.container {
-        margin-top: 50px;
-        margin-bottom: 50px;
-    }
-
-    #purchaseDetail .card {
-        position: relative;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        min-width: 0;
-        word-wrap: break-word;
-        background-color: #fff;
-        background-clip: border-box;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 0.10rem;
-    }
-
-    #purchaseDetail .card-header:first-child {
-        border-radius: calc(0.37rem - 1px) calc(0.37rem - 1px) 0 0;
-    }
-
-    #purchaseDetail .card-header {
-        padding: 0.75rem 1.25rem;
-        margin-bottom: 0;
-        background-color: #fff;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    .track {
-        position: relative;
-        background-color: #ddd;
-        height: 7px;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        margin-bottom: 60px;
-        margin-top: 50px;
-    }
-
-    .track .step {
-            -webkit-box-flex: 1;
-            -ms-flex-positive: 1;
-            flex-grow: 1;
-            width: 25%;
-            margin-top: -18px;
-            text-align: center;
-            position: relative;
-        }
-
-            .track .step.active:before {
-                background: var(--bs-primary);
-            }
-
-            .track .step::before {
-                height: 7px;
-                position: absolute;
-                content: "";
-                width: 100%;
-                left: 0;
-                top: 18px;
-            }
-
-            .track .step.active .icon {
-                background: var(--bs-primary);
-                color: #fff;
-            }
-
-        .track .icon {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
-            position: relative;
-            border-radius: 100%;
-            background: #ddd;
-        }
-
-        .track .step.active .text {
-            font-weight: 400;
-            color: #000;
-        }
-
-        .track .text {
-            display: block;
-            margin-top: 7px;
-        }
-
-    .itemside {
-        position: relative;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        width: 100%;
-    }
-
-        .itemside .aside {
-            position: relative;
-            -ms-flex-negative: 0;
-            flex-shrink: 0;
-        }
-
-    .img-sm {
-        width: 80px;
-        height: 80px;
-        padding: 7px;
-    }
-
-    #purchaseDetail ul.row, #purchaseDetail ul.row-sm {
-        list-style: none;
-        padding: 0;
-    }
-
-    .itemside .info {
-        padding-left: 15px;
-        padding-right: 7px;
-    }
-
-    .itemside .title {
-        display: block;
-        margin-bottom: 5px;
-        color: #212529;
-    }
-
-    #purchaseDetail p {
-        margin-top: 0;
-        margin-bottom: 1rem;
-    }
-
-    #purchaseDetail .btn-warning {
-        color: #ffffff;
-        background-color: #ee5435;
-        border-color: #ee5435;
-        border-radius: 1px;
-    }
-
-        #purchaseDetail .btn-warning:hover {
-            color: #ffffff;
-            background-color: #ff2b00;
-            border-color: #ff2b00;
-            border-radius: 1px;
-        }
-
-</style>
